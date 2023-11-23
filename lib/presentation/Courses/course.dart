@@ -1,24 +1,14 @@
+import 'package:advanced_mobile/model/course-dto.dart';
 import 'package:advanced_mobile/presentation/DetailCourse/DetailCourse.dart';
 import 'package:advanced_mobile/presentation/DetailLesson/DetailLesson.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Course extends StatefulWidget {
+  final CourseDTO course;
   final String type;
-  final String image;
-  final String title;
-  final String description;
-  final String level;
-  final String numberLesson;
 
-  const Course(
-      {super.key,
-      required this.type,
-      required this.image,
-      required this.title,
-      required this.description,
-      required this.level,
-      required this.numberLesson});
+  const Course({super.key, required this.type, required this.course});
 
   @override
   State<Course> createState() => _CourseState();
@@ -32,7 +22,8 @@ class _CourseState extends State<Course> {
         if (widget.type == "Course") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => DetailCourse()),
+            MaterialPageRoute(
+                builder: (context) => DetailCourse(course: widget.course)),
           );
         }
       },
@@ -65,8 +56,8 @@ class _CourseState extends State<Course> {
                       .fill, // You can change the BoxFit property as needed
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
-                          widget.image))), // Replace with your image
+                      child: Image.network(
+                          widget.course.imageUrl))), // Replace with your image
             ),
             SizedBox(
               height: 5,
@@ -77,14 +68,14 @@ class _CourseState extends State<Course> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.title,
+                    widget.course.name,
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    widget.description,
+                    widget.course.description,
                     style: TextStyle(color: Colors.grey),
                   ),
                   SizedBox(
@@ -113,11 +104,12 @@ class _CourseState extends State<Course> {
                         )
                       : Row(
                           children: [
-                            Text(widget.level),
+                            Text(widget.course.level),
                             Visibility(
                                 visible: widget.type == "Course",
-                                child: Text(
-                                    " - " + widget.numberLesson + " Lessons"))
+                                child: Text(" - " +
+                                    widget.course.topics.length.toString() +
+                                    " Lessons"))
                           ],
                         )
                 ],
