@@ -1,10 +1,12 @@
+import 'package:advanced_mobile/model/tutor.dart';
 import 'package:advanced_mobile/presentation/DetailCourse/DetailCourse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class InfoDetail extends StatelessWidget {
-  const InfoDetail({super.key});
+  const InfoDetail(this.tutor, {super.key});
+  final TutorDTO tutor;
   @override
   Widget build(BuildContext context) {
     List<String> listSpecialties = [
@@ -27,7 +29,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text("BA",
+            child: Text(tutor.education,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
           SizedBox(
@@ -44,7 +46,7 @@ class InfoDetail extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.blue.shade100,
                 borderRadius: BorderRadius.circular(20)),
-            child: Text("English",
+            child: Text(tutor.languages,
                 style: TextStyle(color: Colors.blue.shade800, fontSize: 16)),
           ),
           SizedBox(
@@ -60,7 +62,7 @@ class InfoDetail extends StatelessWidget {
             child: Wrap(
                 spacing: 10,
                 runSpacing: 10,
-                children: generateWidgets(listSpecialties)),
+                children: generateWidgets(tutor.specialties)),
           ),
           SizedBox(
             height: 20,
@@ -76,7 +78,7 @@ class InfoDetail extends StatelessWidget {
               text: TextSpan(
                 text: 'Basic Conversation Topics: ',
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),
                 children: [
@@ -86,11 +88,10 @@ class InfoDetail extends StatelessWidget {
                           color: Colors.blue, fontWeight: FontWeight.normal),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailCourse()),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => DetailCourse()),
+                          // );
                         }),
                 ],
               ),
@@ -105,7 +106,7 @@ class InfoDetail extends StatelessWidget {
               text: TextSpan(
                 text: 'Life in the Internet Age: ',
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),
                 children: [
@@ -115,11 +116,10 @@ class InfoDetail extends StatelessWidget {
                           color: Colors.blue, fontWeight: FontWeight.normal),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailCourse()),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => DetailCourse()),
+                          // );
                         }),
                 ],
               ),
@@ -135,8 +135,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text(
-                "I loved the weather, the scenery and the laid-back lifestyle of the locals.",
+            child: Text(tutor.interests,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
           SizedBox(
@@ -149,8 +148,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text(
-                "I have more than 10 years of teaching english experience.",
+            child: Text(tutor.experience,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
         ],

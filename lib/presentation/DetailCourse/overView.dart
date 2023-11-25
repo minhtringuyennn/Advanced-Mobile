@@ -1,12 +1,22 @@
+import 'package:advanced_mobile/model/course-dto.dart';
+import 'package:advanced_mobile/model/topic-dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class OverView extends StatelessWidget {
-  const OverView({super.key});
+import '../DetailLesson/lesson.dart';
+
+class OverView extends StatefulWidget {
+  final CourseDTO course;
+  const OverView({super.key, required this.course});
 
   @override
+  State<OverView> createState() => _OverViewState();
+}
+
+class _OverViewState extends State<OverView> {
+  @override
   Widget build(BuildContext context) {
-    List<String> topics=["The Internet","Artifical Intelligence (AI)","Social Media","Internet Privacy","Live Streaming","Coding","Technology Transforming Healthcare","Smart Home Technology","Remote Work - A Dream Job?"];
+    List<Topic> topics = widget.course.topics;
     return Column(
       children: [
         Row(
@@ -54,7 +64,10 @@ class OverView extends StatelessWidget {
             ),
             Text(
               "Why take this course",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400,color: Colors.black),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
             )
           ],
         ),
@@ -64,7 +77,7 @@ class OverView extends StatelessWidget {
         Container(
           padding: EdgeInsets.only(left: 30),
           child: Text(
-            "Our world is rapidly changing thanks to new technology, and the vocabulary needed to discuss modern life is evolving almost daily. In this course you will learn the most up-to-date terminology from expertly crafted lessons as well from your native-speaking tutor.",
+            widget.course.reason,
             style: TextStyle(color: Colors.grey.shade700),
           ),
         ),
@@ -87,7 +100,10 @@ class OverView extends StatelessWidget {
             ),
             Text(
               "What will you be able to do",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400,color: Colors.black),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
             )
           ],
         ),
@@ -97,7 +113,7 @@ class OverView extends StatelessWidget {
         Container(
           padding: EdgeInsets.only(left: 30),
           child: Text(
-            "You will learn vocabulary related to timely topics like remote work, artificial intelligence, online privacy, and more. In addition to discussion questions, you will practice intermediate level speaking tasks such as using data to describe trends.",
+            widget.course.purpose,
             style: TextStyle(color: Colors.grey.shade700),
           ),
         ),
@@ -141,7 +157,7 @@ class OverView extends StatelessWidget {
               width: 10,
             ),
             Text(
-              "Intermedicate",
+              widget.course.level,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             )
           ],
@@ -184,7 +200,7 @@ class OverView extends StatelessWidget {
               width: 10,
             ),
             Text(
-              "9 topics",
+              topics.length.toString() + " topics",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             )
           ],
@@ -216,11 +232,13 @@ class OverView extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 15,),
+        SizedBox(
+          height: 15,
+        ),
         ListView(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            children:generateWidgets(topics)),
+            children: generateWidgets(topics)),
         SizedBox(height: 15),
         Row(
           children: <Widget>[
@@ -249,53 +267,63 @@ class OverView extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-
         Row(
           children: [
-            SizedBox(width: 10,),
-            Text("Keegan",style: TextStyle(
-              fontWeight: FontWeight.w500
-            ),),
-            SizedBox(width: 10,),
-
-            Text("More info",style: TextStyle(
-              color: Colors.blue.shade800
-            ),),
-
-
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Keegan",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "More info",
+              style: TextStyle(color: Colors.blue.shade800),
+            ),
           ],
         ),
-        SizedBox(height: 10,),
-
+        SizedBox(
+          height: 10,
+        ),
       ],
     );
   }
-  List<Widget> generateWidgets(List<String> list) {
+
+  List<Widget> generateWidgets(List<Topic> list) {
     List<Widget> widgets = [];
 
     for (int i = 0; i < list.length; i++) {
-      widgets.add( Container(
-        margin: EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(
-                width: 0.5,
-                color: Colors.grey.shade300
-            )
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 15,vertical: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text((i+1).toString()+"."),
-            Text(list[i]),
-          ],
+      widgets.add(GestureDetector(
+        onTap: () {
+          // Handle the onTap event here
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Lesson(title: list[i].name, url: list[i].nameFile)),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(width: 0.5, color: Colors.grey.shade300)),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text((i + 1).toString() + "."),
+              Text(list[i].name),
+            ],
+          ),
         ),
       )); // Thêm widget Text vào danh sách
     }
 
     return widgets;
   }
-
 }

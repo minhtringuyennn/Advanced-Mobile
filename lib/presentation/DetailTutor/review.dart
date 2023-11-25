@@ -1,15 +1,13 @@
+import 'package:advanced_mobile/model/feedback-dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class Review extends StatelessWidget {
-  final String avatar;
-  final String username;
-  final String time;
-  final int rating;
-  final String comment;
-  const Review({super.key, required this.avatar, required this.username, required this.time, required this.rating, required this.comment});
+import '../../model/rate-dto.dart';
 
+class Review extends StatelessWidget {
+  const Review(this.rate, {super.key});
+  final FeedbackDTO rate;
 
   @override
   Widget build(BuildContext context) {
@@ -19,64 +17,71 @@ class Review extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 50, // Đặt chiều rộng của container
-            height: 50, // Đặt chiều cao của container
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
                 color: Colors.grey.shade300, // Màu của đường viền
                 width: 0.5, // Độ rộng của đường viền
-              ),// Đặt hình dạng là hình tròn
+              ), // Đặt hình dạng là hình tròn
             ),
             child: ClipOval(
-              child: Image.asset(
-                  avatar), // Thay thế bằng hình ảnh của bạn
+              child: Image.network(
+                rate.firstInfo.avatar,
+                width: 50,
+                height: 50,
+              ), // Thay thế bằng hình ảnh của bạn
             ),
           ),
           SizedBox(
             width: 15,
           ),
-             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text: username,
-                    style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 16,fontWeight: FontWeight.normal),
-                    children:  <TextSpan>[
-                      TextSpan(text:"   "+  time, style: TextStyle(color: Colors.grey.shade400)),
-
-                    ],
-                  ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: rate.firstInfo.name,
+                  style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: "   " + rate.updatedAt,
+                        style: TextStyle(color: Colors.grey.shade400)),
+                  ],
                 ),
-                SizedBox(height: 5,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: generateWidgets(rating),
-                ),
-                SizedBox(height: 2,),
-
-                Text(comment)
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: generateWidgets(rate.rating),
+              ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(rate.content)
+            ],
+          ),
         ],
       ),
     );
   }
+
   List<Widget> generateWidgets(int rating) {
     List<Widget> widgets = [];
 
-    for (int i = 1; i <=5; i++) {
-      if(i<=rating) {
+    for (int i = 1; i <= 5; i++) {
+      if (i <= rating) {
         widgets.add(Icon(
           Icons.star,
           size: 16,
           color: Colors.yellow.shade500,
         ));
-      }
-      else{
+      } else {
         widgets.add(Icon(
           Icons.star,
           size: 16,
@@ -88,5 +93,4 @@ class Review extends StatelessWidget {
 
     return widgets;
   }
-
 }
