@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';
 import 'package:get/get.dart';
 
+import 'Home.dart';
+
 class SearchTutor extends StatefulWidget {
-  const SearchTutor({super.key});
+  const SearchTutor(this.filterCallback, {super.key});
+  final FilterCallback filterCallback;
 
   @override
   State<SearchTutor> createState() => _SearchTutorState();
@@ -42,6 +45,8 @@ List<Widget> generateWidgets(List<String> list) {
 class _SearchTutorState extends State<SearchTutor> {
   DateTime selectDate = DateTime.now();
   TextEditingController _textEditingDate = TextEditingController();
+  TextEditingController _textName = TextEditingController();
+
   List<String> _items = [
     "Foreign Tutor",
     "Vietnamese Tutor",
@@ -49,11 +54,13 @@ class _SearchTutorState extends State<SearchTutor> {
   ];
   List<String> selectedOptionList = [];
   var selectedOption = ''.obs;
+  String selectedButton = 'All';
+
   @override
   Widget build(BuildContext context) {
     List<String> listFilters = [
       "All",
-      "English for kids",
+      "English for Kids",
       "English for Business",
       "Conversational",
       "STARTERS",
@@ -96,6 +103,11 @@ class _SearchTutorState extends State<SearchTutor> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: TextField(
+              controller: _textName,
+              onSubmitted: (value) {
+                widget.filterCallback(
+                    selectedButton, value, selectedOptionList);
+              },
               //onChanged: (value)=>_runFilter(value),
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(top: -12, left: 5, right: 2),
@@ -130,6 +142,9 @@ class _SearchTutorState extends State<SearchTutor> {
               whenEmpty: "Select tutor nationality",
               onChanged: (value) {
                 selectedOptionList = value;
+
+                widget.filterCallback(selectedButton, _textName.text, value);
+
                 selectedOption.value = "";
                 selectedOptionList.forEach((element) {
                   selectedOption.value = selectedOption.value + ", " + element;
@@ -205,9 +220,49 @@ class _SearchTutorState extends State<SearchTutor> {
           Container(
             margin: EdgeInsets.only(top: 10, bottom: 0),
             child: Wrap(
-              spacing: 5,
-              children: generatedWidgets,
-            ),
+                spacing: 6,
+                runSpacing: -5,
+                children: List.generate(
+                    listFilters.length,
+                    (index) => TextButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedButton = listFilters[index];
+                          });
+                          widget.filterCallback(listFilters[index],
+                              _textName.text, selectedOptionList);
+                        },
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all(
+                              Size(40, 30)), // Thay đổi width và height tùy ý
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5)), // Điều chỉnh lề cho TextButton
+                          backgroundColor: selectedButton == listFilters[index]
+                              ? MaterialStateProperty.all<Color>(
+                                  Colors.blue.shade100)
+                              : MaterialStateProperty.all<Color>(
+                                  Color.fromRGBO(228, 230, 235, 1)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(20), // Đặt góc bo tròn
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          listFilters[index],
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: selectedButton == listFilters[index]
+                                  ? Colors.blue.shade800
+                                  : Color.fromRGBO(100, 100, 100, 1)),
+                        )))
+                //generatedWidgets,
+                ),
           ),
           TextButton(
               onPressed: () {},

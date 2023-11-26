@@ -1,13 +1,29 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../Home/Home.dart';
+import '../../main.dart';
+import '../../model/account-dto.dart';
 
-class FormLogin extends StatelessWidget {
-  const FormLogin({super.key});
+class FormLogin extends StatefulWidget {
+  FormLogin(this.callback);
+  final LoginCallback callback;
+
 
   @override
+  State<FormLogin> createState() => _FormLoginState();
+}
+
+class _FormLoginState extends State<FormLogin> {
+  bool isSuccess=true;
+  bool isTypeEmail = true;
+  bool isTypePassword = true;
+  String errorEmail = "";
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
+    Account account=context.watch<Account>();
     return Container(
       margin: EdgeInsets.only(top: 30),
       child: Column(
@@ -34,7 +50,25 @@ class FormLogin extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             child: TextField(
-              //onChanged: (value)=>_runFilter(value),
+              onChanged: (value) {
+                if (value == "") {
+                  setState(() {
+                    isTypeEmail = false;
+                    errorEmail = "Please input your Email!";
+                  });
+                } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    .hasMatch(value)) {
+                  setState(() {
+                    isTypeEmail = false;
+                    errorEmail = "The input is not valid Email!";
+                  });
+                } else {
+                  setState(() {
+                    isTypeEmail = true;
+                  });
+                }
+              },
+               controller: emailController,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(top: -10),
                 border: InputBorder.none,
@@ -43,6 +77,12 @@ class FormLogin extends StatelessWidget {
               TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
             ),
           ),
+          Visibility(
+              visible: !isTypeEmail,
+              child: Text(
+                errorEmail,
+                style: TextStyle(color: Colors.red),
+              )),
           Container(
             margin: EdgeInsets.only(top: 12),
             child: Text(
@@ -69,7 +109,22 @@ class FormLogin extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             child: TextField(
-              //onChanged: (value)=>{},
+              onChanged: (value) {
+                if (value == "") {
+                  if (isTypePassword == true) {
+                    setState(() {
+                      isTypePassword = false;
+                    });
+                  }
+                } else {
+                  if (isTypePassword == false) {
+                    setState(() {
+                      isTypePassword = true;
+                    });
+                  }
+                }
+              },
+              controller: passwordController,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(top: 1),
                 suffixIcon: Icon(
@@ -84,6 +139,35 @@ class FormLogin extends StatelessWidget {
               TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
             ),
           ),
+          Visibility(
+              visible: !isTypePassword,
+              child: Text(
+                "Please input your Password!",
+                style: TextStyle(color: Colors.red),
+              )),
+          Visibility(
+            visible: !isSuccess,
+            child: Container(
+              margin: EdgeInsets.only(top: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 7),
+              decoration: BoxDecoration(
+                color: Color(0xFFfff2f0),
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(
+                  width: 1,
+                  color: Color(0xFFffccc7),
+                )
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.highlight_remove_sharp,color: Colors.red,size: 18,),
+                  SizedBox(width: 5,),
+                  Text("Log in failed! Incorrect email or password.")
+                ],
+              ),
+            ),
+          ),
+          
           Container(
               margin: EdgeInsets.only(top: 20),
               child: Text(
@@ -95,10 +179,23 @@ class FormLogin extends StatelessWidget {
             margin: EdgeInsets.only(top: 5),
             child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
+                  if(isTypeEmail&&emailController.text!=""&&passwordController.text!=""){
+                    if(emailController.text==account.email&&passwordController.text==account.password)
+                    {
+                      setState(() {
+                        isSuccess=true;
+                      });
+                      widget.callback(1);
+                    }
+                    else{
+                      setState(() {
+                        isSuccess=false;
+                      });
+
+                    }
+                  }
+
+
 
                 },
                 style: ButtonStyle(

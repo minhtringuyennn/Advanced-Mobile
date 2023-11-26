@@ -1,15 +1,22 @@
+import 'package:advanced_mobile/model/tutor.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/DetailTutor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+
+import '../../repository/favorite-repository.dart';
 
 class Tutor extends StatefulWidget {
-  const Tutor({super.key});
+  const Tutor(this.tutor, {super.key});
+  final TutorDTO tutor;
 
   @override
   State<Tutor> createState() => _TutorState();
 }
 
 List<Widget> generateWidgets(List<String> list) {
+  print(list);
   List<Widget> widgets = [];
   Color backgroundColor = Color.fromARGB(255, 221, 234, 255);
 
@@ -40,17 +47,38 @@ List<Widget> generateWidgets(List<String> list) {
   return widgets;
 }
 
+List<Widget> generateRatings(double rating) {
+  int realRating = rating.round();
+  List<Widget> widgets = [];
+
+  for (int i = 1; i <= 5; i++) {
+    if (i <= realRating) {
+      widgets.add(const Icon(
+        Icons.star,
+        size: 15,
+        color: Colors.yellow,
+      ));
+    } else {
+      widgets.add(Icon(
+        Icons.star,
+        size: 15,
+        color: Colors.grey.shade300,
+      ));
+      // Thêm widget Text vào danh sách
+    }
+  }
+
+  return widgets;
+}
+
 class _TutorState extends State<Tutor> {
   @override
   Widget build(BuildContext context) {
-    List<String> listFilters = [
-      "English for kids",
-      "English for Business",
-      "Conversational",
-      "STARTERS",
-      "IELTS",
-    ];
-    List<Widget> generatedWidgets = generateWidgets(listFilters);
+    FavouriteRepository favouriteRepository =
+        context.watch<FavouriteRepository>();
+    var isInFavourite =
+        favouriteRepository.itemIds.contains(widget.tutor.userId);
+    List<Widget> generatedWidgets = generateWidgets(widget.tutor.specialties);
     return Container(
       padding: EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 15),
       decoration: BoxDecoration(
@@ -80,7 +108,8 @@ class _TutorState extends State<Tutor> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DetailTutor()),
+                        MaterialPageRoute(
+                            builder: (context) => DetailTutor(widget.tutor)),
                       );
                     },
                     child: Container(
@@ -94,8 +123,9 @@ class _TutorState extends State<Tutor> {
                         ),
                       ),
                       child: ClipOval(
-                        child: Image.asset(
-                            'images/welcome_login.png'), // Thay thế bằng hình ảnh của bạn
+                        child: Image.network(widget.tutor.avatar != null
+                            ? widget.tutor.avatar
+                            : "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
                       ),
                     ),
                   ),
@@ -110,19 +140,26 @@ class _TutorState extends State<Tutor> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailTutor()),
+                                builder: (context) =>
+                                    DetailTutor(widget.tutor)),
                           );
                         },
                         child: Text(
-                          "Keegan",
+                          widget.tutor.name,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 20),
                         ),
                       ),
                       Row(
                         children: [
-                          SvgPicture.asset(
-                            'images/Tunisia.svg', // Replace with the path to your SVG file
+                          SvgPicture.network(
+                            widget.tutor.country != null
+                                ? "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/" +
+                                    widget.tutor.country
+                                        .toString()
+                                        .toLowerCase() +
+                                    ".svg"
+                                : "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/ph.svg", // Replace with the path to your SVG file
                             width: 16, // Adjust the width as needed
                             height: 16, // Adjust the height as needed
                           ),
@@ -130,7 +167,9 @@ class _TutorState extends State<Tutor> {
                             width: 3,
                           ),
                           Text(
-                            "Tunisia",
+                            widget.tutor.country != null
+                                ? widget.tutor.country
+                                : "Philippines",
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black54,
@@ -142,42 +181,25 @@ class _TutorState extends State<Tutor> {
                         height: 2,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.yellow,
-                          )
-                        ],
-                      )
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: generateRatings(widget.tutor.rating != null
+                              ? widget.tutor.rating
+                              : 0.0))
                     ],
                   )
                 ],
               ),
-              Icon(
-                Icons.favorite_border,
-                color: Colors.blueAccent,
+              IconButton(
+                icon: Icon(
+                  isInFavourite ? Icons.favorite : Icons.favorite_border,
+                  color: isInFavourite ? Colors.red : Colors.blueAccent,
+                ),
+                onPressed: () {
+                  // Handle icon click here
+                  isInFavourite
+                      ? favouriteRepository.remove(widget.tutor.userId)
+                      : favouriteRepository.add(widget.tutor.userId);
+                },
               )
             ],
           ),
@@ -191,8 +213,7 @@ class _TutorState extends State<Tutor> {
           ),
           Container(
             margin: EdgeInsets.only(top: 10, bottom: 20),
-            child: Text(
-                "I am passionate about running and fitness, I often compete in trail/mountain running events and I love pushing myself. I am training to one day take part in ultra-endurance events. I also enjoy watching rugby on the weekends, reading and watching podcasts on Youtube. My most memorable life experience would be living in and traveling around Southeast Asia.",
+            child: Text(widget.tutor.bio,
                 maxLines: 4,
                 style: TextStyle(fontSize: 12, color: Colors.black54),
                 overflow: TextOverflow.ellipsis),
