@@ -1,22 +1,47 @@
-
+import 'package:advanced_mobile/model/schedule-dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 
+import '../../model/tutor.dart';
+
 class Session extends StatefulWidget {
+  final ScheduleDTO schedule;
   final String typeSession;
-  final String time_or_number;
-  const Session(
-      {super.key, required this.typeSession, required this.time_or_number});
+  const Session({super.key, required this.schedule, required this.typeSession});
 
   @override
   State<Session> createState() => _SessionState();
 }
 
 class _SessionState extends State<Session> {
+  String convertDate(int time) {
+    String date = DateFormat.yMMMMEEEEd()
+        .format(DateTime.fromMillisecondsSinceEpoch(time));
+    return date;
+  }
+
+  String convertTime(int start, int end) {
+    DateTime timestart = DateTime.fromMillisecondsSinceEpoch(start);
+    DateTime timeend = DateTime.fromMillisecondsSinceEpoch(end);
+
+    String result_start =
+        "${timestart.hour.toString().length == 1 ? "0" + timestart.hour.toString() : timestart.hour.toString()}:${timestart.minute.toString().length == 1 ? "0" + timestart.minute.toString() : timestart.minute.toString()}";
+    String result_end =
+        "${timeend.hour.toString().length == 1 ? "0" + timeend.hour.toString() : timeend.hour.toString()}:${timeend.minute.toString().length == 1 ? "0" + timeend.minute.toString() : timeend.minute.toString()}";
+    String result = result_start + " - " + result_end;
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<TutorDTO> listTutor = context.watch<List<TutorDTO>>();
+    List<TutorDTO> myTutor = listTutor
+        .where((element) => element.userId == widget.schedule.tutorId)
+        .toList();
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.all(15),
@@ -27,10 +52,9 @@ class _SessionState extends State<Session> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Thu, 26 Oct 23",
+            convertDate(widget.schedule.startTimestamp!),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
-          Text(widget.time_or_number),
           Container(
             margin: EdgeInsets.only(top: 15),
             padding: EdgeInsets.all(15),
@@ -49,8 +73,9 @@ class _SessionState extends State<Session> {
                     ),
                   ),
                   child: ClipOval(
-                    child: Image.asset(
-                        'images/welcome_login.png'), // Thay thế bằng hình ảnh của bạn
+                    child: Image.network(myTutor[0].avatar != null
+                        ? listTutor[0].avatar
+                        : "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
                   ),
                 ),
                 SizedBox(
@@ -60,14 +85,18 @@ class _SessionState extends State<Session> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Keegan",
+                      myTutor[0].name,
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                     ),
                     Row(
                       children: [
                         SvgPicture.asset(
-                          'images/Tunisia.svg', // Replace with the path to your SVG file
+                          myTutor[0].country != null
+                              ? "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/" +
+                                  myTutor[0].country.toString().toLowerCase() +
+                                  ".svg"
+                              : "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/ph.svg", // Replace with the path to your SVG file
                           width: 16, // Adjust the width as needed
                           height: 16, // Adjust the height as needed
                         ),
@@ -75,7 +104,9 @@ class _SessionState extends State<Session> {
                           width: 3,
                         ),
                         Text(
-                          "Tunisia",
+                          myTutor[0].country != null
+                              ? myTutor[0].country
+                              : "Philippines",
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.black54,
@@ -122,7 +153,8 @@ class _SessionState extends State<Session> {
                   children: [
                     Text(
                       widget.typeSession == "Schedule"
-                          ? "03:30 - 03:55"
+                          ? convertTime(widget.schedule.startTimestamp,
+                              widget.schedule.endTimestamp)
                           : "Lesson Time: 03:30 - 03:55",
                       style: TextStyle(
                         fontSize: 18,
@@ -512,7 +544,7 @@ class _SessionState extends State<Session> {
                                       "Edit",
                                       style: TextStyle(
                                           color: Colors.blueAccent // Text color
-                                      ),
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -542,7 +574,7 @@ class _SessionState extends State<Session> {
       title: Text(
         'What is your rating for Keegan?',
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
       ),
       message: null,
       // encourage your user to leave a high rating?
@@ -571,16 +603,17 @@ class _SessionState extends State<Session> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 8,),
+        SizedBox(
+          height: 8,
+        ),
         Text(
           'Lesson Time',
           textAlign: TextAlign.center,
-          style:  TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade800
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
         ),
-        SizedBox(height: 3,),
+        SizedBox(
+          height: 3,
+        ),
         Text(
           'Sat, 28 Oct 23, 15:30 - 15:55',
           textAlign: TextAlign.center,
@@ -589,20 +622,18 @@ class _SessionState extends State<Session> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 20,),
-
+        SizedBox(
+          height: 20,
+        ),
         Container(
           height: 0.5, // Customize the height of the left line
-          color: Colors
-              .grey.shade400, // Customize the color of the left line
+          color: Colors.grey.shade400, // Customize the color of the left line
         )
-
-
       ]),
       starSize: 30,
       starColor: Colors.yellow.shade700,
       submitButtonText: 'Submit',
-      submitButtonTextStyle : TextStyle(
+      submitButtonTextStyle: TextStyle(
         fontWeight: FontWeight.w500,
         fontSize: 18,
       ),
