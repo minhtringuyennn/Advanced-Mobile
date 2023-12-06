@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:advanced_mobile/Provider/auth_provider.dart';
+import 'package:advanced_mobile/Provider/course_provider.dart';
 import 'package:advanced_mobile/model/account-dto.dart';
 import 'package:advanced_mobile/model/tutor.dart';
 import 'package:advanced_mobile/presentation/Courses/Courses.dart';
@@ -16,13 +18,10 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import 'model/course-dto.dart';
-import 'model/user-dto.dart';
 
 void main() {
   runApp(MyApp());
 }
-
-typedef LoginCallback = void Function(int _appState);
 
 class MyApp extends StatefulWidget {
   MyApp({super.key});
@@ -32,97 +31,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final Account account = Account(email: "", password: "");
+  AuthProvider authProvider = AuthProvider();
+  CourseProvider courseProvider = CourseProvider();
   List<TutorDTO> listTutor = [];
   List<CourseDTO> listCourse = [];
 
-  final mySchedule = new MyScheduleChangeNotifier();
-  final favouriteRepository = new FavouriteRepository();
-  late User userData;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-
-    loadTutors();
-    loadCourse();
-    loadUser();
-  }
-
-  Future<void> loadUser() async {
-    // Đọc dữ liệu từ file JSON
-    User data;
-    String jsonString = await rootBundle.loadString('assets/data/user.json');
-    Map<String, dynamic> jsonData = json.decode(jsonString);
-
-    // Lấy danh sách tutors từ dữ liệu JSON
-    Map<String, dynamic> userJson = {};
-
-    if (jsonData['user'] != null) {
-      userJson = Map<String, dynamic>.from(jsonData['user']);
-    }
-    print(userJson);
-    userData = User.fromJson(userJson);
-  }
-
-  Future<void> loadCourse() async {
-    // Đọc dữ liệu từ file JSON
-    String jsonString = await rootBundle.loadString('assets/data/course.json');
-    Map<String, dynamic> jsonData = json.decode(jsonString);
-
-    // Lấy danh sách tutors từ dữ liệu JSON
-    List<Map<String, dynamic>> courseList = [];
-
-    if (jsonData['data'] != null && jsonData['data']['rows'] is List) {
-      courseList = List<Map<String, dynamic>>.from(jsonData['data']['rows']);
-    }
-    listCourse = courseList.map((json) => CourseDTO.fromJson(json)).toList();
-  }
-
-  Future<void> loadTutors() async {
-    // Đọc dữ liệu từ file JSON
-    String jsonString =
-        await rootBundle.loadString('assets/data/dataTutor.json');
-    Map<String, dynamic> jsonData = json.decode(jsonString);
-
-    // Lấy danh sách tutors từ dữ liệu JSON
-    List<Map<String, dynamic>> tutorList = [];
-    List<Map<String, dynamic>> favoriteList = [];
-
-    if (jsonData['tutors'] != null && jsonData['tutors']['rows'] is List) {
-      tutorList = List<Map<String, dynamic>>.from(jsonData['tutors']['rows']);
-    }
-
-    // Chuyển đổi thành danh sách các đối tượng Tutor'
-    listTutor = tutorList.map((json) => TutorDTO.fromJson(json)).toList();
-
-    if (jsonData['tutors'] != null && jsonData['favoriteTutor'] is List) {
-      favoriteList = List<Map<String, dynamic>>.from(jsonData['favoriteTutor']);
-    }
-    List<String> idindex = [];
-
-    for (var tutor in favoriteList) {
-      String secondId = tutor['secondId'];
-      idindex.add(secondId);
-    }
-
-    setState(() {
-      favouriteRepository.setListIds(idindex);
-    });
-  }
-
-  int appState = 0;
-  void loginCallback(int _appState) {
-    setState(() {
-      appState = _appState;
-    });
-  }
-
   Widget displayWidget() {
-    if (appState == 0) {
-      return Login(loginCallback);
+    if (authProvider.currentUser == null) {
+      return Login();
     } else {
-      return BottomNavBar(loginCallback);
+      return BottomNavBar();
     }
   }
 
@@ -131,12 +49,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => account),
+        ChangeNotifierProvider(create: (context) => authProvider),
         Provider(create: (context) => listTutor),
         Provider(create: (context) => listCourse),
-        ChangeNotifierProvider(create: (context) => favouriteRepository),
-        ChangeNotifierProvider(create: (context) => mySchedule),
-        ChangeNotifierProvider(create: (context) => userData)
+        ChangeNotifierProvider(create: (context) => courseProvider),
       ],
       child: MaterialApp(
           title: 'LetTutor',
@@ -145,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: Consumer<Account>(builder: (context, account, _) {
+          home: Consumer<AuthProvider>(builder: (context, account, _) {
             return displayWidget();
           })),
     );
@@ -153,8 +69,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar(this.loginCallback, {super.key});
-  final LoginCallback loginCallback;
+  const BottomNavBar({super.key});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -166,13 +81,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _buildScreens() {
-      return [
-        Home(widget.loginCallback),
-        Courses(widget.loginCallback),
-        Schedule(widget.loginCallback),
-        History(widget.loginCallback),
-        SettingPage(widget.loginCallback)
-      ];
+      return [Home(), Courses(), Schedule(), History(), SettingPage()];
     }
 
     List<PersistentBottomNavBarItem> _navBarsItems() {
