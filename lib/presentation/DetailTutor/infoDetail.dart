@@ -1,4 +1,5 @@
 import 'package:advanced_mobile/model/tutor.dart';
+import 'package:advanced_mobile/model/tutor/infor.dart';
 import 'package:advanced_mobile/presentation/DetailCourse/DetailCourse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -6,16 +7,9 @@ import 'package:flutter/material.dart';
 
 class InfoDetail extends StatelessWidget {
   const InfoDetail(this.tutor, {super.key});
-  final TutorDTO tutor;
+  final TutorInfo tutor;
   @override
   Widget build(BuildContext context) {
-    List<String> listSpecialties = [
-      "English for Business",
-      "Conversational",
-      "English for kids",
-      "IELTS",
-      "STARTERS"
-    ];
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: 20),
@@ -29,7 +23,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text(tutor.education,
+            child: Text(tutor.education!,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
           SizedBox(
@@ -46,7 +40,7 @@ class InfoDetail extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.blue.shade100,
                 borderRadius: BorderRadius.circular(20)),
-            child: Text(tutor.languages,
+            child: Text(tutor.languages!,
                 style: TextStyle(color: Colors.blue.shade800, fontSize: 16)),
           ),
           SizedBox(
@@ -62,7 +56,7 @@ class InfoDetail extends StatelessWidget {
             child: Wrap(
                 spacing: 10,
                 runSpacing: 10,
-                children: generateWidgets(tutor.specialties)),
+                children: generateWidgets(tutor.specialties!.split(','))),
           ),
           SizedBox(
             height: 20,
@@ -135,7 +129,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text(tutor.interests,
+            child: Text(tutor.interests!,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
           SizedBox(
@@ -148,7 +142,7 @@ class InfoDetail extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(left: 10),
-            child: Text(tutor.experience,
+            child: Text(tutor.experience!,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ),
         ],
