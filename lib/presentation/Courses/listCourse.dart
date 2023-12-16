@@ -1,9 +1,14 @@
 import 'package:advanced_mobile/presentation/Courses/course.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Provider/auth_provider.dart';
+import '../../Provider/course_provider.dart';
+import '../../common/loading.dart';
 import '../../model/course-dto.dart';
-import '../Home/tutor.dart';
+import '../../model/course/course_model.dart';
+import '../../services/course.api.dart';
 
 class ListCourse extends StatefulWidget {
   const ListCourse({super.key});
@@ -15,78 +20,89 @@ class ListCourse extends StatefulWidget {
 class _ListCourseState extends State<ListCourse> {
   List<CourseDTO> courses = [];
 
+  bool isCallApi = false;
+  bool isLoading = true;
+
+  //Pagination
+  int currentPage = 1;
+  int maxPage = 1;
+  int numberOfShowPages = 0;
+
+  List<CourseModel> courseList = [];
+  Map<String, List<CourseModel>> groupedCourses = {};
+
   @override
   Widget build(BuildContext context) {
-    courses = context.watch<List<CourseDTO>>();
-    print(courses.length.toString());
+    final authProvider = Provider.of<AuthProvider>(context);
+    final courseProvider = Provider.of<CourseProvider>(context);
 
-    Map<String, List<CourseDTO>> groupedCourses = {};
-    print("bbbbbbbbbbbbbb");
-
-    for (CourseDTO course in courses) {
-      if (groupedCourses.containsKey(course.categories[0].title)) {
-        groupedCourses[course.categories[0].title]!.add(course);
-      } else {
-        groupedCourses[course.categories[0].title] = [course];
-      }
+    if (!isCallApi) {
+      callAPIGetCourseList(1, CourseRepository(), courseProvider, authProvider);
     }
-    print("cccccccccccccc");
 
-    return Container(
-      //child: Column(
-      // children: listTypeCourses.map((valueItem) {
-      //   return Container(
-      //     margin: EdgeInsets.only(top:30),
-      //     child: Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start,
-      //         children:[
-      //       Text(valueItem,style: TextStyle(
-      //         fontSize: 22,
-      //         fontWeight: FontWeight.w500
-      //       ),),
-      //       ListView(
-      //         physics: NeverScrollableScrollPhysics(),
-      //         shrinkWrap: true,
-      //         children:[
-      //           Course(type: "Course",image: "images/AvatarCourse.png",title: "Life in the Internet Age",description: "Let's discuss how technology is changing the way we live",level: "Intermediate",numberLesson: "9",),
-      //           Course(type: "Course",image: "images/AvatarCourse.png",title: "Life in the Internet Age",description: "Let's discuss how technology is changing the way we live",level: "Intermediate",numberLesson: "9",),
-      //           Course(type: "Course",image: "images/AvatarCourse.png",title: "Life in the Internet Age",description: "Let's discuss how technology is changing the way we live",level: "Intermediate",numberLesson: "9",),
-      //         ]
-      //
-      //
-      //       ),
-      //     ]
-      //     ),
-      //   );}
-      // ).toList()
-      child: ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: groupedCourses.length,
-          itemBuilder: (context, index) {
-            String type = groupedCourses.keys.elementAt(index);
-            List<CourseDTO> typeCourses = groupedCourses[type]!;
-            return Container(
-              margin: EdgeInsets.only(top: 30),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      type,
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
-                    ),
-                    Column(
-                      children: typeCourses.map((course) {
-                        return Course(
-                          type: "Course",
-                          course: course,
-                        );
-                      }).toList(),
-                    ),
-                  ]),
-            );
-          }),
-    );
+    return !isCallApi
+        ? Loading()
+        : ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: groupedCourses.length,
+            itemBuilder: (context, index) {
+              String type = groupedCourses.keys.elementAt(index);
+              List<CourseModel> typeCourses = groupedCourses[type]!;
+
+              return Container(
+                margin: EdgeInsets.only(top: 30),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        type,
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                      Column(
+                        children: typeCourses.map((course) {
+                          return Course(
+                            type: "Course",
+                            course: course,
+                          );
+                        }).toList(),
+                      ),
+                    ]),
+              );
+            },
+          );
+  }
+
+  Future<void> callAPIGetCourseList(int page, CourseRepository courseRepository,
+      CourseProvider courseProvider, AuthProvider authProvider) async {
+    await courseRepository.getCourseListWithPagination(
+        accessToken: authProvider.token?.access?.token ?? "",
+        search: courseProvider.search,
+        page: page,
+        size: 10,
+        onSuccess: (response, total) async {
+          Map<String, List<CourseModel>> groupedCoursesTemp = {};
+
+          for (CourseModel course in response) {
+            if (groupedCoursesTemp.containsKey(course.categories![0].title)) {
+              groupedCoursesTemp[course.categories![0].title]!.add(course);
+            } else {
+              groupedCoursesTemp[course.categories![0].title!] = [course];
+            }
+          }
+          setState(() {
+            groupedCourses = groupedCoursesTemp;
+            courseList = response;
+            isCallApi = true;
+            currentPage = page;
+            isLoading = false;
+          });
+        },
+        onFail: (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.toString()}')),
+          );
+        });
   }
 }

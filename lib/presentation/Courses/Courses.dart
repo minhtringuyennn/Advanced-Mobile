@@ -1,23 +1,19 @@
-import 'dart:convert';
-
+import 'package:advanced_mobile/Provider/auth_provider.dart';
 import 'package:advanced_mobile/presentation/Courses/filter.dart';
+import 'package:advanced_mobile/presentation/Courses/listCourse.dart';
 import 'package:advanced_mobile/presentation/Courses/search.dart';
 import 'package:advanced_mobile/presentation/History/History.dart';
 import 'package:advanced_mobile/presentation/Home/Home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
-import '../../model/course-dto.dart';
 import '../Schedule/Schedule.dart';
 import 'content.dart';
 
 class Courses extends StatefulWidget {
-  const Courses(this.loginCallback, {super.key});
-  final LoginCallback loginCallback;
+  const Courses({super.key});
 
   @override
   State<Courses> createState() => _CoursesState();
@@ -83,8 +79,7 @@ class _CoursesState extends State<Courses> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Home(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Home()),
                 );
                 // Update the state of the app.
                 // ...
@@ -103,8 +98,7 @@ class _CoursesState extends State<Courses> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Courses(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Courses()),
                 );
                 // Update the state of the app.
                 // ...
@@ -123,8 +117,7 @@ class _CoursesState extends State<Courses> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Schedule(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Schedule()),
                 );
                 // Update the state of the app.
                 // ...
@@ -143,8 +136,7 @@ class _CoursesState extends State<Courses> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => History(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => History()),
                 );
                 // Update the state of the app.
                 // ...
@@ -159,7 +151,9 @@ class _CoursesState extends State<Courses> {
               title: const Text('Logout',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               onTap: () {
-                widget.loginCallback(0);
+                var authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
+                authProvider.clearUserInfo();
               },
             ),
           ],
@@ -214,7 +208,7 @@ class _CoursesState extends State<Courses> {
       ),
       body: SingleChildScrollView(
           child: Container(
-        padding: EdgeInsets.all(30),
+        padding: EdgeInsets.all(25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -225,7 +219,9 @@ class _CoursesState extends State<Courses> {
             Text(
                 "LiveTutor has built the most quality, methodical and scientific courses in the fields of life for those who are in need of improving their knowledge of the fields."),
             Filter(),
-            Content()
+            SizedBox(height: 20),
+            ListCourse(),
+            SizedBox(height: 10),
           ],
         ),
       )),

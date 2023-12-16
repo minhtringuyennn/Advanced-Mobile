@@ -1,16 +1,11 @@
-import 'package:advanced_mobile/model/course-dto.dart';
+import 'package:advanced_mobile/model/course/course_model.dart';
 import 'package:advanced_mobile/presentation/Courses/course.dart';
 import 'package:advanced_mobile/presentation/DetailCourse/overView.dart';
-import 'package:advanced_mobile/presentation/DetailTutor/infoDetail.dart';
-import 'package:advanced_mobile/presentation/DetailTutor/listReview.dart';
-import 'package:advanced_mobile/presentation/DetailTutor/videoIntro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:expandable_text/expandable_text.dart';
 
 class DetailCourse extends StatefulWidget {
-  final CourseDTO course;
+  final CourseModel course;
   const DetailCourse({super.key, required this.course});
 
   @override
