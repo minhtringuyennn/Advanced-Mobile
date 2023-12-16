@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../Provider/auth_provider.dart';
 import '../../model/account-dto.dart';
 
 class FormLogin extends StatefulWidget {
@@ -18,7 +20,6 @@ class _FormLoginState extends State<FormLogin> {
   TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    Account account = context.watch<Account>();
     return Container(
       margin: EdgeInsets.only(top: 30),
       child: Column(
@@ -145,11 +146,28 @@ class _FormLoginState extends State<FormLogin> {
             width: double.infinity,
             margin: EdgeInsets.only(top: 20),
             child: TextButton(
-                onPressed: () {
-                  if (emailController.text != "" && isTypeEmail&&
-                      passwordController.text != "") {
-                    account.register(emailController.text, passwordController.text);
-                    Navigator.pop(context, true);
+                onPressed: () async {
+                  if (emailController.text.isNotEmpty &&
+                      isTypeEmail &&
+                      passwordController.text.isNotEmpty) {
+                    var authProvider =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    try {
+                      await authProvider.authRepository.signUpByAccount(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        onSuccess: () {
+                          Navigator.pop(context, true);
+                        },
+                        onFail: (String error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${error.toString()}')),
+                          );
+                        },
+                      );
+                    } catch (e) {
+                      // Handle exceptions
+                    }
                   }
                 },
                 style: ButtonStyle(

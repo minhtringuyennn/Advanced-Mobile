@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../Provider/auth_provider.dart';
 import '../../main.dart';
 import '../Courses/Courses.dart';
 import '../History/History.dart';
@@ -12,8 +13,7 @@ import '../Home/Home.dart';
 import '../Schedule/Schedule.dart';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage(this.loginCallback, {super.key});
-  final LoginCallback loginCallback;
+  const SettingPage({super.key});
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -82,8 +82,7 @@ class _SettingPageState extends State<SettingPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Home(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Home()),
                 );
                 // Update the state of the app.
                 // ...
@@ -102,8 +101,7 @@ class _SettingPageState extends State<SettingPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Courses(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Courses()),
                 );
                 // Update the state of the app.
                 // ...
@@ -122,8 +120,7 @@ class _SettingPageState extends State<SettingPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Schedule(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => Schedule()),
                 );
                 // Update the state of the app.
                 // ...
@@ -142,8 +139,7 @@ class _SettingPageState extends State<SettingPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => History(widget.loginCallback)),
+                  MaterialPageRoute(builder: (context) => History()),
                 );
                 // Update the state of the app.
                 // ...
@@ -158,7 +154,8 @@ class _SettingPageState extends State<SettingPage> {
               title: const Text('Logout',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               onTap: () {
-                widget.loginCallback(0);
+                var authProvider = context.watch<AuthProvider>();
+                authProvider.clearUserInfo();
               },
             ),
           ],
@@ -350,7 +347,9 @@ class _SettingPageState extends State<SettingPage> {
                         duration: Duration(seconds: 2),
                       ),
                     );
-                    widget.loginCallback(0);
+                    var authProvider =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    authProvider.clearUserInfo();
                   },
                   icons: Icons.logout,
                   iconStyle: IconStyle(

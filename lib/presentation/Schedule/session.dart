@@ -1,15 +1,12 @@
-import 'package:advanced_mobile/model/schedule-dto.dart';
+import 'package:advanced_mobile/common/loading.dart';
+import 'package:advanced_mobile/model/schedule/booking_infor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 
-import '../../model/tutor.dart';
-
 class Session extends StatefulWidget {
-  final ScheduleDTO schedule;
+  final BookingInfo schedule;
   final String typeSession;
   const Session({super.key, required this.schedule, required this.typeSession});
 
@@ -38,10 +35,6 @@ class _SessionState extends State<Session> {
 
   @override
   Widget build(BuildContext context) {
-    List<TutorDTO> listTutor = context.watch<List<TutorDTO>>();
-    List<TutorDTO> myTutor = listTutor
-        .where((element) => element.userId == widget.schedule.tutorId)
-        .toList();
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.all(15),
@@ -52,7 +45,8 @@ class _SessionState extends State<Session> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            convertDate(widget.schedule.startTimestamp!),
+            convertDate(
+                widget.schedule.scheduleDetailInfo!.startPeriodTimestamp!),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
           Container(
@@ -73,9 +67,9 @@ class _SessionState extends State<Session> {
                     ),
                   ),
                   child: ClipOval(
-                    child: Image.network(myTutor[0].avatar != null
-                        ? listTutor[0].avatar
-                        : "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
+                    child: Image.network(widget.schedule!.scheduleDetailInfo!
+                            .scheduleInfo!.tutorInfo!.avatar ??
+                        "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
                   ),
                 ),
                 SizedBox(
@@ -85,34 +79,19 @@ class _SessionState extends State<Session> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      myTutor[0].name,
+                      widget.schedule!.scheduleDetailInfo!.scheduleInfo!
+                          .tutorInfo!.name!,
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                     ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          myTutor[0].country != null
-                              ? "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/" +
-                                  myTutor[0].country.toString().toLowerCase() +
-                                  ".svg"
-                              : "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/ph.svg", // Replace with the path to your SVG file
-                          width: 16, // Adjust the width as needed
-                          height: 16, // Adjust the height as needed
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          myTutor[0].country != null
-                              ? myTutor[0].country
-                              : "Philippines",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black54,
-                              fontSize: 14),
-                        ),
-                      ],
+                    Text(
+                      widget.schedule!.scheduleDetailInfo!.scheduleInfo!
+                              .tutorInfo!.country! ??
+                          "",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black54,
+                          fontSize: 14),
                     ),
                     SizedBox(
                       height: 3,
@@ -153,9 +132,17 @@ class _SessionState extends State<Session> {
                   children: [
                     Text(
                       widget.typeSession == "Schedule"
-                          ? convertTime(widget.schedule.startTimestamp,
-                              widget.schedule.endTimestamp)
-                          : "Lesson Time: 03:30 - 03:55",
+                          ? convertTime(
+                              widget.schedule.scheduleDetailInfo!.scheduleInfo!
+                                  .startTimestamp!,
+                              widget.schedule.scheduleDetailInfo!.scheduleInfo!
+                                  .endTimestamp!)
+                          : "Lesson Time: " +
+                              convertTime(
+                                  widget.schedule.scheduleDetailInfo!
+                                      .scheduleInfo!.startTimestamp!,
+                                  widget.schedule.scheduleDetailInfo!
+                                      .scheduleInfo!.endTimestamp!),
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -249,7 +236,9 @@ class _SessionState extends State<Session> {
                               ),
                             )),
                             child: Text(
-                              "Hello word",
+                              widget.schedule?.scheduleDetailInfo
+                                      ?.bookingInfo?[0]?.studentRequest! ??
+                                  "",
                               style: TextStyle(fontSize: 14),
                             ))
                       ],
