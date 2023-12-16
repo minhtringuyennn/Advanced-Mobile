@@ -35,7 +35,7 @@ List<Widget> generateWidgets(List<String> list) {
         child: Text(
           list[i],
           style: TextStyle(
-              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+              fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black87),
         ))); // Thêm widget Text vào danh sách
   }
 
@@ -54,25 +54,24 @@ class _SearchTutorState extends State<SearchTutor> {
   ];
   List<String> selectedOptionList = [];
   var selectedOption = ''.obs;
-  String selectedButton = 'All';
+  String selectedButton = 'all';
 
   @override
   Widget build(BuildContext context) {
     List<String> listFilters = [
-      "All",
-      "English for Kids",
-      "English for Business",
-      "Conversational",
-      "STARTERS",
-      "MOVERS",
-      "FLYERS",
-      "KET",
-      "PET",
-      "IELTS",
-      "TOEFL",
-      "TOEIC"
+      "all",
+      "english-for-kids",
+      "english-for-business",
+      "conversational",
+      "starters",
+      "movers",
+      "flyers",
+      "ket",
+      "pet",
+      "ielts",
+      "toefl",
+      "toeic"
     ];
-    List<Widget> generatedWidgets = generateWidgets(listFilters);
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       width: double.infinity,
@@ -156,67 +155,6 @@ class _SearchTutorState extends State<SearchTutor> {
           SizedBox(
             height: 10,
           ),
-          Text(
-            "Select available tutoring time:",
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 17,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Container(
-            height: 40,
-            width: 160,
-            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey, // Màu của biên
-                width: 1.0, // Độ rộng của biên
-              ),
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: TextField(
-              controller: _textEditingDate,
-              onTap: () async {
-                final DateTime? datetime = await showDatePicker(
-                    context: context,
-                    initialDate: selectDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(3000));
-                if (datetime != null) {
-                  setState(() {
-                    _textEditingDate.text =
-                        "${datetime.year}-${datetime.month}-${datetime.day}";
-                    selectDate = datetime;
-                  });
-                }
-              },
-              //onChanged: (value)=>_runFilter(value),
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(top: 1, left: 13, right: 2),
-                  border: InputBorder.none,
-                  hintText: "Select a day",
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.black54,
-                    size: 20,
-                  )),
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          TimeRangeSelector(),
           Container(
             margin: EdgeInsets.only(top: 10, bottom: 0),
             child: Wrap(

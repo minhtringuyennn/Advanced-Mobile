@@ -1,20 +1,21 @@
+import 'package:advanced_mobile/Provider/auth_provider.dart';
+import 'package:advanced_mobile/presentation/ForgotPassword/ForgotPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
-import '../../model/account-dto.dart';
+import 'package:advanced_mobile/model/user/user.dart';
+
+import '../../model/user/token.dart';
 
 class FormLogin extends StatefulWidget {
-  FormLogin(this.callback);
-  final LoginCallback callback;
-
+  FormLogin();
 
   @override
   State<FormLogin> createState() => _FormLoginState();
 }
 
 class _FormLoginState extends State<FormLogin> {
-  bool isSuccess=true;
+  bool isSuccess = true;
   bool isTypeEmail = true;
   bool isTypePassword = true;
   String errorEmail = "";
@@ -23,7 +24,6 @@ class _FormLoginState extends State<FormLogin> {
   TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    Account account=context.watch<Account>();
     return Container(
       margin: EdgeInsets.only(top: 30),
       child: Column(
@@ -56,7 +56,8 @@ class _FormLoginState extends State<FormLogin> {
                     isTypeEmail = false;
                     errorEmail = "Please input your Email!";
                   });
-                } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                } else if (!RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     .hasMatch(value)) {
                   setState(() {
                     isTypeEmail = false;
@@ -68,13 +69,13 @@ class _FormLoginState extends State<FormLogin> {
                   });
                 }
               },
-               controller: emailController,
+              controller: emailController,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(top: -10),
                 border: InputBorder.none,
               ),
               style:
-              TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
+                  TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
             ),
           ),
           Visibility(
@@ -136,7 +137,7 @@ class _FormLoginState extends State<FormLogin> {
               ),
               obscureText: true,
               style:
-              TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
+                  TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),
             ),
           ),
           Visibility(
@@ -149,58 +150,69 @@ class _FormLoginState extends State<FormLogin> {
             visible: !isSuccess,
             child: Container(
               margin: EdgeInsets.only(top: 20),
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 7),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: BoxDecoration(
-                color: Color(0xFFfff2f0),
-                borderRadius: BorderRadius.circular(2),
-                border: Border.all(
-                  width: 1,
-                  color: Color(0xFFffccc7),
-                )
-              ),
+                  color: Color(0xFFfff2f0),
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(
+                    width: 1,
+                    color: Color(0xFFffccc7),
+                  )),
               child: Row(
                 children: [
-                  Icon(Icons.highlight_remove_sharp,color: Colors.red,size: 18,),
-                  SizedBox(width: 5,),
+                  Icon(
+                    Icons.highlight_remove_sharp,
+                    color: Colors.red,
+                    size: 18,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
                   Text("Log in failed! Incorrect email or password.")
                 ],
               ),
             ),
           ),
-          
           Container(
               margin: EdgeInsets.only(top: 20),
-              child: Text(
-                "Forgot Password?",
-                style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgotPassword()),
+                  );
+                },
+                child: Text(
+                  "Forgot Password?",
+                  style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                ),
               )),
           Container(
             width: double.infinity,
             margin: EdgeInsets.only(top: 5),
             child: TextButton(
                 onPressed: () {
-                  if(isTypeEmail&&emailController.text!=""&&passwordController.text!=""){
-                    if(emailController.text==account.email&&passwordController.text==account.password)
-                    {
-                      setState(() {
-                        isSuccess=true;
-                      });
-                      widget.callback(1);
-                    }
-                    else{
-                      setState(() {
-                        isSuccess=false;
-                      });
-
-                    }
+                  if (isTypeEmail &&
+                      emailController.text != "" &&
+                      passwordController.text != "") {
+                    var authProvider =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    authProvider.authRepository.loginByAccount(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        onSuccess: (UserModel userModel, Token token) {
+                          authProvider.saveLoginInfo(userModel, token);
+                        },
+                        onFail: (String error) {
+                          setState(() {
+                            isSuccess = false;
+                          });
+                        });
                   }
-
-
-
                 },
                 style: ButtonStyle(
                   backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.blueAccent),
+                      MaterialStateProperty.all<Color>(Colors.blueAccent),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5), // Đặt góc bo tròn

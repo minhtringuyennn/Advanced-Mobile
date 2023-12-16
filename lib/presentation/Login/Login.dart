@@ -8,8 +8,7 @@ import '../../main.dart';
 import 'formLogin.dart';
 
 class Login extends StatelessWidget {
-  Login(this.callback);
-  final LoginCallback callback;
+  Login();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +87,7 @@ class Login extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              FormLogin(callback),
+              FormLogin(),
               Container(
                   margin: EdgeInsets.only(top: 30),
                   child: Text("Or continue with")),

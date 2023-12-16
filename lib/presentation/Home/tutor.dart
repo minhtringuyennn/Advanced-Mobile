@@ -1,15 +1,17 @@
-import 'package:advanced_mobile/model/tutor.dart';
+import 'package:advanced_mobile/model/tutor/tutor_model.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/DetailTutor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../repository/favorite-repository.dart';
+import '../../Provider/auth_provider.dart';
+import '../../services/user.api.dart';
+import 'Home.dart';
 
 class Tutor extends StatefulWidget {
-  const Tutor(this.tutor, {super.key});
-  final TutorDTO tutor;
+  const Tutor(this.tutor, this.isFavorite, this.changeFavorite, {super.key});
+  final TutorModel tutor;
+  final bool isFavorite;
+  final ChangeFavorite changeFavorite;
 
   @override
   State<Tutor> createState() => _TutorState();
@@ -74,11 +76,9 @@ List<Widget> generateRatings(double rating) {
 class _TutorState extends State<Tutor> {
   @override
   Widget build(BuildContext context) {
-    FavouriteRepository favouriteRepository =
-        context.watch<FavouriteRepository>();
-    var isInFavourite =
-        favouriteRepository.itemIds.contains(widget.tutor.userId);
-    List<Widget> generatedWidgets = generateWidgets(widget.tutor.specialties);
+    var authProvider = Provider.of<AuthProvider>(context);
+    List<Widget> generatedWidgets =
+        generateWidgets(widget.tutor.specialties?.split(',') ?? []);
     return Container(
       padding: EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 15),
       decoration: BoxDecoration(
@@ -109,7 +109,8 @@ class _TutorState extends State<Tutor> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DetailTutor(widget.tutor)),
+                            builder: (context) => DetailTutor(
+                                widget.tutor, widget.changeFavorite)),
                       );
                     },
                     child: Container(
@@ -123,9 +124,8 @@ class _TutorState extends State<Tutor> {
                         ),
                       ),
                       child: ClipOval(
-                        child: Image.network(widget.tutor.avatar != null
-                            ? widget.tutor.avatar
-                            : "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
+                        child: Image.network(widget.tutor.avatar ??
+                            "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
                       ),
                     ),
                   ),
@@ -136,69 +136,43 @@ class _TutorState extends State<Tutor> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailTutor(widget.tutor)),
-                          );
-                        },
+                        // onTap: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(builder: (context) => DetailTutor(widget.tutor)),
+                        //   );
+                        // },
                         child: Text(
-                          widget.tutor.name,
+                          widget.tutor.name ?? "",
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 20),
                         ),
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.network(
-                            widget.tutor.country != null
-                                ? "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/" +
-                                    widget.tutor.country
-                                        .toString()
-                                        .toLowerCase() +
-                                    ".svg"
-                                : "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/4x3/ph.svg", // Replace with the path to your SVG file
-                            width: 16, // Adjust the width as needed
-                            height: 16, // Adjust the height as needed
-                          ),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            widget.tutor.country != null
-                                ? widget.tutor.country
-                                : "Philippines",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black54,
-                                fontSize: 14),
-                          ),
-                        ],
+                      Text(
+                        widget.tutor.country ?? "",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black54,
+                            fontSize: 14),
                       ),
                       SizedBox(
                         height: 2,
                       ),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: generateRatings(widget.tutor.rating != null
-                              ? widget.tutor.rating
-                              : 0.0))
+                          children: generateRatings(widget.tutor.rating ?? 0.0))
                     ],
                   )
                 ],
               ),
               IconButton(
                 icon: Icon(
-                  isInFavourite ? Icons.favorite : Icons.favorite_border,
-                  color: isInFavourite ? Colors.red : Colors.blueAccent,
+                  widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: widget.isFavorite ? Colors.red : Colors.blueAccent,
                 ),
                 onPressed: () {
-                  // Handle icon click here
-                  isInFavourite
-                      ? favouriteRepository.remove(widget.tutor.userId)
-                      : favouriteRepository.add(widget.tutor.userId);
+                  callApiManageFavoriteTutor(
+                      widget.tutor.userId!, authProvider);
                 },
               )
             ],
@@ -213,7 +187,7 @@ class _TutorState extends State<Tutor> {
           ),
           Container(
             margin: EdgeInsets.only(top: 10, bottom: 20),
-            child: Text(widget.tutor.bio,
+            child: Text(widget.tutor.bio ?? "",
                 maxLines: 4,
                 style: TextStyle(fontSize: 12, color: Colors.black54),
                 overflow: TextOverflow.ellipsis),
@@ -268,5 +242,34 @@ class _TutorState extends State<Tutor> {
         ],
       ),
     );
+  }
+
+  Future<void> callApiManageFavoriteTutor(
+      String tutorID, AuthProvider authProvider) async {
+    UserRepository userRepository = UserRepository();
+    await userRepository.favoriteTutor(
+        accessToken: authProvider.token?.access?.token ?? "",
+        tutorId: tutorID!,
+        onSuccess: (message, unfavored) async {
+          setState(() {
+            widget.changeFavorite(tutorID);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(
+                "Update favorite tutor successful",
+                style: TextStyle(color: Colors.white),
+              ),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        },
+        onFail: (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.toString()}')),
+          );
+        });
   }
 }
