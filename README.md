@@ -11,3 +11,7 @@ A new Flutter project.
 ## Milestone 2
 
 [Video](https://drive.google.com/file/d/19bbxp9na74A_AbsTdb5AxSim6jHeHhhf/view?usp=drive_link)
+
+## Milestone 3
+
+[Video](https://drive.google.com/file/d/1QXRlMpWar3r59kHwRHX0Cq0jIQbUmqJx/view?usp=drive_link)
