@@ -1,23 +1,13 @@
-import 'dart:convert';
-
 import 'package:advanced_mobile/Provider/auth_provider.dart';
-import 'package:advanced_mobile/Provider/course_provider.dart';
-import 'package:advanced_mobile/model/account-dto.dart';
-import 'package:advanced_mobile/model/tutor.dart';
 import 'package:advanced_mobile/presentation/Courses/Courses.dart';
 import 'package:advanced_mobile/presentation/History/History.dart';
 import 'package:advanced_mobile/presentation/Home/Home.dart';
 import 'package:advanced_mobile/presentation/Login/Login.dart';
 import 'package:advanced_mobile/presentation/Schedule/Schedule.dart';
 import 'package:advanced_mobile/presentation/Setting/Setting.dart';
-import 'package:advanced_mobile/repository/favorite-repository.dart';
-import 'package:advanced_mobile/repository/schedule-student-repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-
-import 'model/course-dto.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,9 +22,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   AuthProvider authProvider = AuthProvider();
-  CourseProvider courseProvider = CourseProvider();
-  List<TutorDTO> listTutor = [];
-  List<CourseDTO> listCourse = [];
 
   Widget displayWidget() {
     if (authProvider.currentUser == null) {
@@ -50,9 +37,6 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => authProvider),
-        Provider(create: (context) => listTutor),
-        Provider(create: (context) => listCourse),
-        ChangeNotifierProvider(create: (context) => courseProvider),
       ],
       child: MaterialApp(
           title: 'LetTutor',

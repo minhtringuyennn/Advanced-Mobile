@@ -30,7 +30,7 @@ class BookingInfo {
   String? calendarId;
   bool? showRecordUrl;
   // List<String>? studentMaterials;
-  List<TutorFeedback>? feedbacks;
+  List<FeedbackDTO>? feedbacks;
 
   BookingInfo({
     this.createdAtTimeStamp,
@@ -86,7 +86,7 @@ class BookingInfo {
         calendarId: json['calendarId'] as String?,
         showRecordUrl: json['showRecordUrl'] as bool?,
         feedbacks: (json['feedbacks'] as List<dynamic>?)
-            ?.map((e) => TutorFeedback.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => FeedbackDTO.fromJson(e as Map<String, dynamic>))
             .toList(),
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
