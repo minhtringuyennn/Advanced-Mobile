@@ -1,12 +1,11 @@
 import 'dart:convert';
 
-import 'package:advanced_mobile/model/tutor.dart';
 import 'package:advanced_mobile/model/tutor/tutor_model.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/booking.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/infoDetail.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/listReview.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/videoIntro.dart';
-import 'package:advanced_mobile/presentation/Home/Home.dart';
+import 'package:advanced_mobile/services/feedback.api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,21 +14,23 @@ import 'package:provider/provider.dart';
 
 import '../../Provider/auth_provider.dart';
 import '../../common/loading.dart';
+import '../../model/tutor/feedback.dart';
 import '../../model/tutor/infor.dart';
 import '../../services/tutors.api.dart';
+import '../../services/user.api.dart';
 
 class DetailTutor extends StatefulWidget {
-  const DetailTutor(this.tutor, this.changeFavorite, {super.key});
+  const DetailTutor(this.tutor, {super.key});
   final TutorModel tutor;
-  final ChangeFavorite changeFavorite;
   @override
   State<DetailTutor> createState() => _DetailTutorState();
 }
 
 class _DetailTutorState extends State<DetailTutor> {
-  late TutorModel tutorData;
   late TutorInfo tutorInfo;
-  bool loading = false;
+  late List<FeedbackDTO> feedbacks = [];
+  bool isFavorite = false;
+  bool loading = true;
 
   List<Widget> generateRatings(double rating) {
     int realRating = rating.toInt();
@@ -57,15 +58,32 @@ class _DetailTutorState extends State<DetailTutor> {
 
   @override
   void initState() {
-    tutorData = widget.tutor;
+    setState(() {
+      isFavorite = widget.tutor.isFavoriteTutor!;
+    });
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
-    callAPIGetTutorById(TutorRepository(),
-        Provider.of<AuthProvider>(context, listen: false), tutorData.userId);
+
+    await Future.wait([
+      callAPIGetTutorById(
+          TutorRepository(),
+          Provider.of<AuthProvider>(context, listen: false),
+          widget.tutor.userId),
+      callAPIGetFeedbackOfTutor(
+          FeedBackRepository(),
+          Provider.of<AuthProvider>(context, listen: false),
+          widget.tutor.userId)
+    ]).whenComplete(() {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
+    });
   }
 
   Future<void> refreshHome() async {
@@ -73,8 +91,14 @@ class _DetailTutorState extends State<DetailTutor> {
       loading = true;
     });
     await Future.wait([
-      callAPIGetTutorById(TutorRepository(),
-          Provider.of<AuthProvider>(context, listen: false), tutorData.userId),
+      callAPIGetTutorById(
+          TutorRepository(),
+          Provider.of<AuthProvider>(context, listen: false),
+          widget.tutor.userId),
+      callAPIGetFeedbackOfTutor(
+          FeedBackRepository(),
+          Provider.of<AuthProvider>(context, listen: false),
+          widget.tutor.userId)
     ]).whenComplete(() {
       setState(() {
         loading = false;
@@ -85,6 +109,8 @@ class _DetailTutorState extends State<DetailTutor> {
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
         appBar: PreferredSize(
           preferredSize:
@@ -134,7 +160,7 @@ class _DetailTutorState extends State<DetailTutor> {
             onRefresh: () async {
               refreshHome();
             },
-            child: !loading
+            child: (loading || widget.tutor == null)
                 ? Loading()
                 : SingleChildScrollView(
                     child: Container(
@@ -155,7 +181,7 @@ class _DetailTutorState extends State<DetailTutor> {
                                 ),
                                 child: ClipOval(
                                   child: Image.network(
-                                    tutorData.avatar!,
+                                    widget.tutor.avatar!,
                                   ),
                                 ),
                               ),
@@ -167,7 +193,7 @@ class _DetailTutorState extends State<DetailTutor> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    tutorData.name!,
+                                    widget.tutor.name!,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 22),
@@ -179,8 +205,8 @@ class _DetailTutorState extends State<DetailTutor> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: generateRatings(
-                                          tutorData.rating != null
-                                              ? tutorData.rating!
+                                          widget.tutor.rating != null
+                                              ? widget.tutor.rating!
                                               : 0.0)),
                                   SizedBox(
                                     height: 10,
@@ -201,7 +227,7 @@ class _DetailTutorState extends State<DetailTutor> {
                                         width: 3,
                                       ),
                                       Text(
-                                        tutorData.country!,
+                                        widget.tutor.country!,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w400,
                                             color: Colors.black54,
@@ -236,14 +262,17 @@ class _DetailTutorState extends State<DetailTutor> {
                                 children: [
                                   IconButton(
                                       onPressed: () {
-                                        widget
-                                            .changeFavorite(tutorData.userId!);
+                                        setState(() {
+                                          isFavorite = !isFavorite;
+                                        });
+                                        callApiManageFavoriteTutor(
+                                            widget.tutor.userId!, authProvider);
                                       },
                                       icon: Icon(
-                                        tutorInfo.isFavorite!
+                                        isFavorite
                                             ? Icons.favorite
                                             : Icons.favorite_border,
-                                        color: tutorInfo.isFavorite!
+                                        color: isFavorite
                                             ? Colors.red
                                             : Colors.blueAccent,
                                         size: 25,
@@ -251,7 +280,7 @@ class _DetailTutorState extends State<DetailTutor> {
                                   Text(
                                     "Favorite",
                                     style: TextStyle(
-                                        color: tutorInfo.isFavorite!
+                                        color: isFavorite
                                             ? Colors.red
                                             : Colors.blueAccent),
                                   )
@@ -282,10 +311,40 @@ class _DetailTutorState extends State<DetailTutor> {
                           ChewieDemo(linkVideo: tutorInfo.video!),
                           InfoDetail(tutorInfo!),
                           SizedBox(height: 20),
-                          ListReview(tutorData.feedbacks!.sublist(0, 10)),
+                          ListReview(feedbacks!),
                           SizedBox(height: 20),
                           Booking(tutor: widget.tutor)
                         ])))));
+  }
+
+  Future<void> callApiManageFavoriteTutor(
+      String tutorID, AuthProvider authProvider) async {
+    UserRepository userRepository = UserRepository();
+
+    await userRepository.favoriteTutor(
+        accessToken: authProvider.token?.access?.token ?? "",
+        tutorId: tutorID!,
+        onSuccess: (message, unfavored) async {
+          setState(() {
+            isFavorite = isFavorite;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(
+                "Update favorite tutor successful",
+                style: TextStyle(color: Colors.white),
+              ),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        },
+        onFail: (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.toString()}')),
+          );
+        });
   }
 
   Future<void> callAPIGetTutorById(TutorRepository tutorRepository,
@@ -296,7 +355,25 @@ class _DetailTutorState extends State<DetailTutor> {
         onSuccess: (response) async {
           setState(() {
             tutorInfo = response;
-            loading = true;
+          });
+        },
+        onFail: (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.toString()}')),
+          );
+        });
+  }
+
+  Future<void> callAPIGetFeedbackOfTutor(FeedBackRepository feedBackRepository,
+      AuthProvider authProvider, String? userId) async {
+    await feedBackRepository.getFeedBackOfTutor(
+        accessToken: authProvider.token?.access?.token ?? "",
+        page: 1,
+        perPage: 20,
+        tutorId: userId ?? "",
+        onSuccess: (response, total) async {
+          setState(() {
+            feedbacks = response;
           });
         },
         onFail: (error) {

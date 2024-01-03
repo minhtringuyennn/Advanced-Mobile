@@ -1,4 +1,3 @@
-import 'package:advanced_mobile/model/feedback-dto.dart';
 import 'package:advanced_mobile/model/tutor/feedback.dart';
 import 'package:advanced_mobile/presentation/DetailTutor/review.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +6,7 @@ import '../../model/rate-dto.dart';
 
 class ListReview extends StatelessWidget {
   const ListReview(this.feedbacks, {super.key});
-  final List<TutorFeedback> feedbacks;
+  final List<FeedbackDTO> feedbacks;
   @override
   Widget build(BuildContext context) {
     return Container(

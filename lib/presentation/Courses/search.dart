@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'Courses.dart';
+
 class SearchCourse extends StatefulWidget {
-  const SearchCourse({super.key});
+  const SearchCourse(this.filterCallback,{super.key});
+  final SearchCourseCallback filterCallback;
+
 
   @override
   State<SearchCourse> createState() => _SearchCourseState();
@@ -77,6 +81,7 @@ class _SearchCourseState extends State<SearchCourse> {
                                     size: 16,
                                   ),
                                   onPressed: () {
+                                    widget.filterCallback("");
                                     _textEditingDate.text = "";
                                   },
                                 ),
@@ -99,7 +104,10 @@ class _SearchCourseState extends State<SearchCourse> {
                           color: Colors.white,
                         ),
                         child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              widget.filterCallback(_textEditingDate.text??"");
+
+                            },
                             icon: Icon(
                               Icons.search_rounded,
                               size: 25,
