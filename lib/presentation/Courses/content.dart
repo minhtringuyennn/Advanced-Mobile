@@ -3,8 +3,13 @@ import 'package:advanced_mobile/presentation/Courses/listCourse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/course-dto.dart';
+import '../../model/course/course_model.dart';
+
 class Content extends StatefulWidget {
-  const Content({super.key});
+  const Content(this.courses, this.groupedCourses, {super.key});
+  final List<CourseDTO> courses;
+  final Map<String, List<CourseModel>> groupedCourses;
 
   @override
   State<Content> createState() => _ContentState();
@@ -16,6 +21,7 @@ class _ContentState extends State<Content> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -117,7 +123,8 @@ class _ContentState extends State<Content> {
         ),
         Visibility(visible: isActived == 2, child: ListBook()),
         Visibility(
-            visible: isActived == 1, child: Expanded(child: ListCourse())),
+            visible: isActived == 1,
+            child: ListCourse(widget.courses, widget.groupedCourses)),
       ],
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:json_annotation/json_annotation.dart';
 
 import 'feedback.dart';
@@ -30,7 +32,7 @@ class TutorModel {
   String? updatedAt;
   String? deletedAt;
   String? studentGroupId;
-  List<TutorFeedback>? feedbacks;
+  List<FeedbackDTO>? feedbacks;
   String? id;
   String? userId;
   String? video;
@@ -48,6 +50,7 @@ class TutorModel {
   bool? isNative;
   int? price;
   bool? isOnline;
+  bool? isFavoriteTutor;
   TutorInfo? tutorInfo;
 
   TutorModel({
@@ -91,6 +94,7 @@ class TutorModel {
     this.languages,
     this.specialties,
     this.resume,
+    this.isFavoriteTutor,
     this.rating,
     this.isNative,
     this.price,
@@ -125,7 +129,7 @@ class TutorModel {
         deletedAt: json['deletedAt'] as String?,
         studentGroupId: json['studentGroupId'] as String?,
         feedbacks: (json['feedbacks'] as List<dynamic>?)
-            ?.map((e) => TutorFeedback.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => FeedbackDTO.fromJson(e as Map<String, dynamic>))
             .toList(),
         id: json['id'] as String?,
         userId: json['userId'] as String?,
@@ -141,6 +145,7 @@ class TutorModel {
         specialties: json['specialties'] as String?,
         resume: json['resume'] as String?,
         rating: (json['rating'] as num?)?.toDouble(),
+        isFavoriteTutor: json['isFavoriteTutor'] as bool?,
         isNative: json['isNative'] as bool?,
         price: json['price'] as int?,
         isOnline: json['isOnline'] as bool?,
@@ -189,6 +194,7 @@ class TutorModel {
     'specialties': specialties,
     'resume': resume,
     'rating': rating,
+    "isFavoriteTutor":isFavoriteTutor,
     'isNative': isNative,
     'price': price,
     'isOnline': isOnline,
