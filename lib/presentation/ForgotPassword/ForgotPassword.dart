@@ -185,10 +185,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       margin: EdgeInsets.only(top: 20),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Login()),
-                          );
+                          Navigator.pop(context);
                         },
                         child: Text(
                           "Go to Login?",
