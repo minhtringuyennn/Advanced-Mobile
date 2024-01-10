@@ -105,30 +105,33 @@ class _TutorState extends State<Tutor> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DetailTutor(
-                                widget.tutor, widget.changeFavorite)),
-                      );
-                    },
-                    child: Container(
-                      width: 65, // Đặt chiều rộng của container
-                      height: 65, // Đặt chiều cao của container
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle, // Đặt hình dạng là hình tròn
-                        border: Border.all(
-                          color: Colors.blue, // Màu của đường viền
-                          width: 1, // Độ rộng của đường viền
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailTutor(widget.tutor)),
+                        );
+                      },
+                      child: Container(
+                        width: 65, // Đặt chiều rộng của container
+                        height: 65, // Đặt chiều cao của container
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle, // Đặt hình dạng là hình tròn
+                          border: Border.all(
+                            color: Colors.blue, // Màu của đường viền
+                            width: 1, // Độ rộng của đường viền
+                          ),
                         ),
-                      ),
-                      child: ClipOval(
-                        child: Image.network(widget.tutor.avatar ??
-                            "https://api.app.lettutor.com/avatar/e9e3eeaa-a588-47c4-b4d1-ecfa190f63faavatar1632109929661.jpg"), // Thay thế bằng hình ảnh của bạn
-                      ),
-                    ),
-                  ),
+                        child: ClipOval(
+                          child: Image.network(
+                            widget.tutor.avatar ?? "",
+                            errorBuilder: (context, error, stackTrace) {
+                              // You can return a default image or any other widget as a fallback
+                              return Image.network("");
+                            },
+                          ),
+                        ),
+                      )),
                   SizedBox(
                     width: 15,
                   ),
@@ -136,12 +139,14 @@ class _TutorState extends State<Tutor> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        // onTap: () {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(builder: (context) => DetailTutor(widget.tutor)),
-                        //   );
-                        // },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailTutor(widget.tutor)),
+                          );
+                        },
                         child: Text(
                           widget.tutor.name ?? "",
                           style: TextStyle(
@@ -171,8 +176,7 @@ class _TutorState extends State<Tutor> {
                   color: widget.isFavorite ? Colors.red : Colors.blueAccent,
                 ),
                 onPressed: () {
-                  callApiManageFavoriteTutor(
-                      widget.tutor.userId!, authProvider);
+                  callApiManageFavoriteTutor(widget.tutor.id!, authProvider);
                 },
               )
             ],
@@ -196,7 +200,13 @@ class _TutorState extends State<Tutor> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailTutor(widget.tutor)),
+                    );
+                  },
                   style: ButtonStyle(
                     side: MaterialStateProperty.all(
                       BorderSide(

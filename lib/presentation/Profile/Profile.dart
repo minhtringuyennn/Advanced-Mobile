@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:advanced_mobile/common/loading.dart';
 import 'package:advanced_mobile/model/user/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,24 +27,25 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController studyScheduleController = TextEditingController();
+  String linkAvatar = "";
   // Define the list of countries
   List<String> countries = ['Vietnam', 'United States', 'Canada', 'Other'];
   String selectedCountry = "Vietnam";
   List<String> itemsLevel = [
     "BEGINNER",
-    "HIGHER-BEGINNER",
-    "PRE-INTERMEDIATE",
+    "HIGHER_BEGINNER",
+    "PRE_INTERMEDIATE",
     "INTERMEDIATE",
-    "UPPER-INTERMEDIATE",
+    "UPPER_INTERMEDIATE",
     "ADVANCED",
     "PROFICIENCY"
   ];
   List<String> itemsCategory = [
-    'All',
-    'English-For-Kids',
-    'Business-English',
+    'ALL',
+    'ENGLISH-FOR-KIDS',
+    'BUSINESS-ENGLISH',
     'TOEIC',
-    'Conversational',
+    'CONVERSATIONAL',
     "TOEFL",
     'PET',
     "KET",
@@ -51,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'TOEFL',
     "STARTERS",
     "MOVERS",
-    "FLYERS",
+    "FLYERS"
   ];
   String selectedLevel = "Beginner";
   List<String> selectedCategory = [];
@@ -61,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void initValues(UserModel userData) {
     setState(() {
+      linkAvatar = userData.avatar ?? "";
       nameController.text = userData.name ?? "";
       emailController.text = userData.email ?? "";
       phoneController.text = userData.phone ?? "";
@@ -79,10 +82,27 @@ class _ProfilePageState extends State<ProfilePage> {
           countries.add(country);
         });
       }
-      selectedDate =
-          DateTime.parse(userData.birthday ?? DateTime.now().toString());
+      if (userData.birthday != null) {
+        List<String> dateComponents = userData.birthday!.split('-');
 
-      String level = userData.level ?? "Beginner";
+        if (dateComponents.length == 3) {
+          String year = dateComponents[0];
+          String month = dateComponents[1];
+          String day = dateComponents[2];
+
+          // Chuyển đổi thành DateTime để kiểm tra tính hợp lệ
+
+          DateTime dateTime =
+              DateTime(int.parse(year), int.parse(month), int.parse(day));
+
+          // Nếu không có ngoại lệ, ngày tháng là hợp lệ
+          String formattedDateString =
+              "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+          selectedDate = DateTime.parse(formattedDateString);
+        }
+      }
+
+      String level = userData.level ?? "BEGINNER";
       check = false;
       for (var element in itemsLevel) {
         if (element.toLowerCase().compareTo(level.toLowerCase()) == 0) {
@@ -101,17 +121,6 @@ class _ProfilePageState extends State<ProfilePage> {
       userData?.learnTopics?.forEach((element) {
         selectedCategory.add(element.key!.toUpperCase());
       });
-      for (var element in itemsCategory) {
-        userData?.learnTopics?.forEach((e) {
-          if (e.key?.toString().compareTo(element.toLowerCase()) != null) {
-            check == true;
-
-            setState(() {
-              itemsCategory.add(e.key!.toUpperCase().toString());
-            });
-          }
-        });
-      }
 
       hasInitValue = true;
     });
@@ -125,6 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
       initValues(authProvider.currentUser!);
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize:
             const Size.fromHeight(50.0), // Define the height of the AppBar
@@ -169,118 +179,122 @@ class _ProfilePageState extends State<ProfilePage> {
           // Replace 'assets/icon.png' with your image path
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Center(
-                child: Stack(
+      body: !hasInitValue
+          ? Loading()
+          : SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: Column(
                   children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: _pickedFile != null
-                                  ? FileImage(File(_pickedFile!.path))
-                                      as ImageProvider<Object>
-                                  : NetworkImage(authProvider
-                                          .currentUser?.avatar ??
-                                      "https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg"))),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          _getFromGallery(authProvider);
-                        },
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor,
+                    SizedBox(height: 40),
+                    Center(
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor),
+                                boxShadow: [
+                                  BoxShadow(
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      color: Colors.black.withOpacity(0.1))
+                                ],
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: _pickedFile != null
+                                        ? FileImage(File(_pickedFile!.path))
+                                            as ImageProvider<Object>
+                                        : NetworkImage(
+                                            linkAvatar,
+                                          ))),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                _getFromGallery(authProvider);
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                  ),
+                                  color: Colors.blue.shade700,
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            color: Colors.blue.shade700,
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        authProvider.currentUser?.name ?? "Anonymous",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    )
+                    ),
+                    SizedBox(height: 10),
+                    Center(
+                        child: _buildInfo("Account ID: ",
+                            authProvider.currentUser?.id ?? "")),
+                    SizedBox(height: 10),
+                    Center(
+                        child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                          child: Text(
+                        "Others review you",
+                        style: TextStyle(fontSize: 14, color: Colors.blue),
+                      )),
+                    )),
+                    SizedBox(height: 10),
+                    Center(
+                        child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                          child: Text(
+                        "Change Password",
+                        style: TextStyle(fontSize: 14, color: Colors.blue),
+                      )),
+                    )),
+                    SizedBox(height: 40),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.grey.shade200,
+                      padding: EdgeInsets.all(15),
+                      child: Text(
+                        "Account",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    _buildForm(authProvider.currentUser!),
                   ],
                 ),
               ),
-              SizedBox(height: 10),
-              Center(
-                child: Text(
-                  authProvider.currentUser?.name ?? "Anonymous",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Center(
-                  child: _buildInfo(
-                      "Account ID: ", authProvider.currentUser?.id ?? "")),
-              SizedBox(height: 10),
-              Center(
-                  child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                    child: Text(
-                  "Others review you",
-                  style: TextStyle(fontSize: 14, color: Colors.blue),
-                )),
-              )),
-              SizedBox(height: 10),
-              Center(
-                  child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                    child: Text(
-                  "Change Password",
-                  style: TextStyle(fontSize: 14, color: Colors.blue),
-                )),
-              )),
-              SizedBox(height: 40),
-              Container(
-                width: double.infinity,
-                color: Colors.grey.shade200,
-                padding: EdgeInsets.all(15),
-                child: Text(
-                  "Account",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              _buildForm(authProvider.currentUser!),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -384,7 +398,6 @@ class _ProfilePageState extends State<ProfilePage> {
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           var authProvider = Provider.of<AuthProvider>(context, listen: false);
-
           callAPIUpdateProfile(UserRepository(), authProvider);
         }
       },
@@ -542,7 +555,13 @@ class _ProfilePageState extends State<ProfilePage> {
           authProvider.saveLoginInfo(user, authProvider.token);
           initValues(authProvider.currentUser!);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
+            const SnackBar(
+              content: Text(
+                'Profile updated successfully',
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+            ),
           );
         },
         onFail: (error) {

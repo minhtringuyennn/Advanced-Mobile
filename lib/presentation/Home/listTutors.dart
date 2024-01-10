@@ -19,7 +19,7 @@ class ListTutors extends StatefulWidget {
 class _ListTutorsState extends State<ListTutors> {
   bool checkIfTutorIsFavorite(TutorModel tutor) {
     for (var element in widget._favTutorsId) {
-      if (element == tutor.userId) return true;
+      if (element == tutor.id) return true;
     }
     return false;
   }
