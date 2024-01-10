@@ -14,10 +14,13 @@ class AuthRepository extends BaseRepository {
     required Function(UserModel, Token) onSuccess,
     required Function(String) onFail,
   }) async {
+    print(email);
+    print(password);
     final response = await service.post(url: 'login', data: {
       "email": email,
       "password": password,
     }) as BoundResource;
+
     print(response.statusCode);
     switch (response.statusCode) {
       case 200:

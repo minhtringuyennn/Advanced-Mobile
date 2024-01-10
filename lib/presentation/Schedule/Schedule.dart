@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pagination_flutter/pagination.dart';
 
 import '../../model/schedule/booking_infor.dart';
 import '../Courses/Courses.dart';
@@ -23,9 +24,9 @@ class _ScheduleState extends State<Schedule> {
   List<BookingInfo> listLesson = [];
   bool isCallApi = false;
 
+  int _numPages = 1;
+  int _currentPage = 1;
   bool loading = true;
-
-  int currentPage = 1;
 
   @override
   void didChangeDependencies() {
@@ -55,7 +56,10 @@ class _ScheduleState extends State<Schedule> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         endDrawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
@@ -248,6 +252,7 @@ class _ScheduleState extends State<Schedule> {
               ? Loading()
               : SingleChildScrollView(
                   child: Container(
+                    constraints: BoxConstraints(minHeight: 600),
                     padding: EdgeInsets.all(25),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -302,8 +307,63 @@ class _ScheduleState extends State<Schedule> {
                             },
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
+                          Visibility(
+                            visible: _numPages > 1,
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.all(16),
+                              child: Pagination(
+                                numOfPages: _numPages,
+                                selectedPage: _currentPage,
+                                pagesVisible: 3,
+                                onPageChanged: (page) {
+                                  setState(() {
+                                    loading = true;
+                                    _currentPage = page;
+                                  });
+
+                                  callApiGetOwnSchedules(
+                                      page, BookingRepository(), authProvider);
+                                },
+                                nextIcon: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.blue,
+                                  size: 14,
+                                ),
+                                previousIcon: const Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.blue,
+                                  size: 14,
+                                ),
+                                activeTextStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                activeBtnStyle: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.blue),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                  ),
+                                ),
+                                inactiveBtnStyle: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(100),
+                                  )),
+                                ),
+                                inactiveTextStyle: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          )
                         ]),
                   ),
                 ),
@@ -315,7 +375,7 @@ class _ScheduleState extends State<Schedule> {
     await bookingRepository.getUpcomingClass(
         accessToken: authProvider.token?.access?.token ?? "",
         page: page,
-        perPage: 20,
+        perPage: 10,
         now: DateTime.now().millisecondsSinceEpoch.toString(),
         onSuccess: (response, total) async {
           listLesson = [];
@@ -326,10 +386,10 @@ class _ScheduleState extends State<Schedule> {
           }
 
           setState(() {
+            _numPages = total;
             isCallApi = true;
             loading = false;
           });
-          currentPage = page;
         },
         onFail: (error) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -154,7 +154,8 @@ class _SettingPageState extends State<SettingPage> {
               title: const Text('Logout',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
               onTap: () {
-                var authProvider = context.watch<AuthProvider>();
+                var authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
                 authProvider.clearUserInfo();
               },
             ),
@@ -215,13 +216,9 @@ class _SettingPageState extends State<SettingPage> {
             // User card
             BigUserCard(
               backgroundColor: Colors.blue,
-              // userName: userProvider.userData?.user!.name ?? "Anonymous",
               userName: "Nguyễn Minh Trí" ?? "Anonymous",
-
-              // userProfilePic: NetworkImage(userProvider.userData?.user!.avatar ?? "https://yt3.googleusercontent.com/mm2-5anuZ6ghmK2zL6QM7wciD6kuupOfOagiAh5vZE1hx9tRhKEXTAExZUUY4PVq2RSw9jBpBQ=s900-c-k-c0x00ffffff-no-rj"
-              //        ,scale:1),
               userProfilePic: const NetworkImage(
-                  "https://yt3.googleusercontent.com/mm2-5anuZ6ghmK2zL6QM7wciD6kuupOfOagiAh5vZE1hx9tRhKEXTAExZUUY4PVq2RSw9jBpBQ=s900-c-k-c0x00ffffff-no-rj",
+                  "https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg",
                   scale: 1),
               cardActionWidget: SettingsItem(
                 icons: Icons.edit,

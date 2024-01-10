@@ -3,7 +3,11 @@ import 'package:advanced_mobile/model/schedule/booking_infor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rating_dialog/rating_dialog.dart';
+
+import '../../Provider/auth_provider.dart';
+import '../../services/booking.api.dart';
 
 class Session extends StatefulWidget {
   final BookingInfo schedule;
@@ -15,6 +19,16 @@ class Session extends StatefulWidget {
 }
 
 class _SessionState extends State<Session> {
+  bool isLoading = false;
+
+  final List<DropdownMenuItem<String>> reason = [
+    const DropdownMenuItem(
+        value: '1', child: Text('Reschedule at another time')),
+    const DropdownMenuItem(value: '2', child: Text('Busy at that time')),
+    const DropdownMenuItem(value: '3', child: Text('Asked by the tutor')),
+    const DropdownMenuItem(value: '4', child: Text('Other')),
+  ];
+
   String convertDate(int time) {
     String date = DateFormat.yMMMMEEEEd()
         .format(DateTime.fromMillisecondsSinceEpoch(time));
@@ -150,7 +164,9 @@ class _SessionState extends State<Session> {
                     Visibility(
                       visible: widget.typeSession == "Schedule",
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _dialogBuilder(context);
+                          },
                           style: ButtonStyle(
                             side: MaterialStateProperty.all(
                               BorderSide(
@@ -236,9 +252,7 @@ class _SessionState extends State<Session> {
                               ),
                             )),
                             child: Text(
-                              widget.schedule?.scheduleDetailInfo
-                                      ?.bookingInfo?[0]?.studentRequest! ??
-                                  "",
+                              widget.schedule?.studentRequest ?? "",
                               style: TextStyle(fontSize: 14),
                             ))
                       ],
@@ -644,5 +658,210 @@ class _SessionState extends State<Session> {
       barrierDismissible: false, // set to false if you want to force a rating
       builder: (context) => _dialog,
     );
+  }
+
+  void _dialogBuilder(BuildContext context) {
+    String? valueReason;
+    bool errorReason = false;
+    TextEditingController textEditingController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return isLoading
+            ? Loading()
+            : AlertDialog(
+                content: SingleChildScrollView(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20, bottom: 0),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 65, // Đặt chiều rộng của container
+                          height: 65, // Đặt chiều cao của container
+                          decoration: BoxDecoration(
+                            shape:
+                                BoxShape.circle, // Đặt hình dạng là hình tròn
+                            border: Border.all(
+                              color: Colors.blue, // Màu của đường viền
+                              width: 1, // Độ rộng của đường viền
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Image.network(widget
+                                    .schedule!
+                                    .scheduleDetailInfo!
+                                    .scheduleInfo!
+                                    .tutorInfo!
+                                    .avatar ??
+                                "https://sandbox.app.lettutor.com/static/media/login.8d01124a.png"),
+                          ),
+                        ),
+                        Text(
+                          widget.schedule!.scheduleDetailInfo!.scheduleInfo!
+                              .tutorInfo!.name!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          'Lesson Time',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 14, color: Colors.grey.shade800),
+                        ),
+                        SizedBox(
+                          height: 3,
+                        ),
+                        Text(
+                          convertDate(widget.schedule.scheduleDetailInfo!
+                              .startPeriodTimestamp!),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: 0.5, // Customize the height of the left line
+                          color: Colors.grey
+                              .shade400, // Customize the color of the left line
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text("What was the reason you cancel this booking?",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            margin: const EdgeInsets.symmetric(vertical: 16),
+                            child: DropdownButtonFormField(
+                              items: reason,
+                              value: valueReason,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue, width: 2),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.black, width: 2),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  valueReason = value;
+                                });
+                              },
+                            )),
+                        Visibility(
+                            visible: errorReason,
+                            child: Text(
+                              "The reason cannot be empty",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                        Container(
+                          child: TextField(
+                            maxLines: 3,
+                            controller: textEditingController,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
+                                hintText: "Additional Notes",
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.w300, fontSize: 16)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Later'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Submit'),
+                    onPressed: () {
+                      if (valueReason != null) {
+                        AuthProvider authProvider =
+                            Provider.of<AuthProvider>(context, listen: false);
+                        setState(() {
+                          isLoading = true;
+                        });
+                        callApiCancelClass(
+                            valueReason!,
+                            textEditingController.text,
+                            widget.schedule.id!,
+                            BookingRepository(),
+                            authProvider);
+                        Navigator.of(context).pop();
+                      } else {
+                        setState(() {
+                          errorReason = true;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              );
+      },
+    );
+  }
+
+  Future<void> callApiCancelClass(
+      String cancelReasonId,
+      String note,
+      String scheduleDetailId,
+      BookingRepository bookingRepository,
+      AuthProvider authProvider) async {
+    await bookingRepository.cancelClass(
+        accessToken: authProvider.token?.access?.token ?? "",
+        cancelReasonId: cancelReasonId,
+        note: note,
+        scheduleDetailId: scheduleDetailId,
+        onSuccess: (message) async {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                message,
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+        onFail: (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.toString()}')),
+          );
+        });
   }
 }
