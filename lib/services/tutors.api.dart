@@ -22,28 +22,6 @@ class TutorRepository extends BaseRepository {
     await onSuccess();
   }
 
-  Future<void> getListTutor({
-    required String accessToken,
-    required int perPage,
-    required int page,
-    required Function(ResponseGetListTutor) onSuccess,
-    required Function(String) onFail,
-  }) async {
-    final response = await service.get(
-        url: "more?perPage=$perPage&page=$page",
-        headers: {"Authorization": "Bearer $accessToken"}) as BoundResource;
-
-    switch (response.statusCode) {
-      case 200:
-      case 201:
-        onSuccess(ResponseGetListTutor.fromJson(response.response));
-        break;
-      default:
-        onFail(response.errorMsg.toString());
-        break;
-    }
-  }
-
   //TODO: RESPONSE UNKNOWN
   Future<void> writeReviewAfterClass({
     required Function() onSuccess,
@@ -86,7 +64,6 @@ class TutorRepository extends BaseRepository {
     required Function(List<TutorModel>, int) onSuccess,
     required Function(String) onFail,
   }) async {
-    print(nationality);
     final response = await service.post(url: "search", data: {
       "filters": {
         "specialties": speciality,
