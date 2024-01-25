@@ -2,8 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../model/schedule/booking_infor.dart';
 
-
-
 @JsonSerializable()
 class ResponseGetListBooking {
   String? message;
@@ -22,11 +20,10 @@ class ResponseGetListBooking {
             : BookingPagination.fromJson(json['data'] as Map<String, dynamic>),
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'message': message,
-    'data': data,
-  };
+        'message': message,
+        'data': data,
+      };
 }
-
 
 @JsonSerializable()
 class BookingPagination {
@@ -45,9 +42,8 @@ class BookingPagination {
             ?.map((e) => BookingInfo.fromJson(e as Map<String, dynamic>))
             .toList(),
       );
-  Map<String, dynamic> toJson() =>  <String, dynamic>{
-    'count': count,
-    'rows': rows,
-  };
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'count': count,
+        'rows': rows,
+      };
 }
-

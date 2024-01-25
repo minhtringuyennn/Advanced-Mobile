@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 @JsonSerializable(explicitToJson: true)
 class WalletInfo {
   String? id;
@@ -21,8 +20,7 @@ class WalletInfo {
     this.bonus,
   });
 
-  factory WalletInfo.fromJson(Map<String, dynamic> json) =>
-      WalletInfo(
+  factory WalletInfo.fromJson(Map<String, dynamic> json) => WalletInfo(
         id: json['id'] as String?,
         userId: json['userId'] as String?,
         amount: json['amount'] as String?,
@@ -32,12 +30,12 @@ class WalletInfo {
         bonus: json['bonus'] as int?,
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': id,
-    'userId': userId,
-    'amount': amount,
-    'isBlocked': isBlocked,
-    'createdAt': createdAt,
-    'updatedAt': updatedAt,
-    'bonus': bonus,
-  };
+        'id': id,
+        'userId': userId,
+        'amount': amount,
+        'isBlocked': isBlocked,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+        'bonus': bonus,
+      };
 }

@@ -62,7 +62,6 @@ class Register extends StatelessWidget {
           margin: EdgeInsets.only(top: 15, right: 15, bottom: 0, left: 15),
           child: Column(
             children: [
-              Image.asset("images/welcome_login.png"),
               SizedBox(
                 height: 30,
               ),
@@ -85,9 +84,6 @@ class Register extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               FormLogin(),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text("Or continue with")),
               OrtherLogin()
             ],
           ),
@@ -106,20 +102,6 @@ class OrtherLogin extends StatelessWidget {
       margin: EdgeInsets.only(top: 25),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("images/facebook.png", width: 30, height: 30),
-              SizedBox(
-                width: 20,
-              ),
-              Image.asset("images/google.png", width: 30, height: 30),
-              SizedBox(
-                width: 20,
-              ),
-              Image.asset("images/smartphone.png", width: 30, height: 30),
-            ],
-          ),
           Container(
             margin: EdgeInsets.only(top: 25, bottom: 50),
             child: RichText(

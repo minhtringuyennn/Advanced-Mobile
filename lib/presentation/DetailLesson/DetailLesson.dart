@@ -88,7 +88,7 @@ class _DetailLessonState extends State<DetailLesson> {
                         .fill, // You can change the BoxFit property as needed
 
                     child: Image.asset(
-                        "images/AvatarCourse.png")), // Replace with your image
+                        "assets/images/AvatarCourse.png")), // Replace with your image
               ),
               SizedBox(
                 height: 5,

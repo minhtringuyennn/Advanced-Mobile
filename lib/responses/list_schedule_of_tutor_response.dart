@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../../model/schedule/schedule.dart';
 
-
 @JsonSerializable()
 class ResponseGetListSchedule {
   String? message;

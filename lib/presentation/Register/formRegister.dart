@@ -161,7 +161,8 @@ class _FormLoginState extends State<FormLogin> {
                         },
                         onFail: (String error) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: ${error.toString()}')),
+                            SnackBar(
+                                content: Text('Error: ${error.toString()}')),
                           );
                         },
                       );

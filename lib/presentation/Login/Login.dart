@@ -65,7 +65,6 @@ class Login extends StatelessWidget {
           margin: EdgeInsets.only(top: 15, right: 15, bottom: 0, left: 15),
           child: Column(
             children: [
-              Image.asset("images/welcome_login.png"),
               SizedBox(
                 height: 30,
               ),
@@ -88,9 +87,6 @@ class Login extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               FormLogin(),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text("Or continue with")),
               OrtherLogin()
             ],
           ),
@@ -109,20 +105,6 @@ class OrtherLogin extends StatelessWidget {
       margin: EdgeInsets.only(top: 25),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("images/facebook.png", width: 30, height: 30),
-              SizedBox(
-                width: 20,
-              ),
-              Image.asset("images/google.png", width: 30, height: 30),
-              SizedBox(
-                width: 20,
-              ),
-              Image.asset("images/smartphone.png", width: 30, height: 30),
-            ],
-          ),
           Container(
             margin: EdgeInsets.only(top: 25, bottom: 50),
             child: RichText(
@@ -145,8 +127,8 @@ class OrtherLogin extends StatelessWidget {
                             context: context,
                             autoCloseDuration: const Duration(seconds: 3),
                             title: Text('Sign up successful!'),
-                            description:
-                                Text('Please check your email to verify account.'),
+                            description: Text(
+                                'Please check your email to verify account.'),
                             animationDuration:
                                 const Duration(milliseconds: 300),
                             icon: Icon(

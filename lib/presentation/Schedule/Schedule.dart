@@ -257,14 +257,6 @@ class _ScheduleState extends State<Schedule> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Icon(
-                            Icons.calendar_month,
-                            color: Colors.blueAccent,
-                            size: 130,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
                           Text(
                             "Schedule",
                             style: TextStyle(

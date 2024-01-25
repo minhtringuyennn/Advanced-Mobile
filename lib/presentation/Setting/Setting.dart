@@ -213,32 +213,8 @@ class _SettingPageState extends State<SettingPage> {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: [
-            // User card
-            BigUserCard(
-              backgroundColor: Colors.blue,
-              userName: "Nguyễn Minh Trí" ?? "Anonymous",
-              userProfilePic: const NetworkImage(
-                  "https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg",
-                  scale: 1),
-              cardActionWidget: SettingsItem(
-                icons: Icons.edit,
-                iconStyle: IconStyle(
-                  withBackground: true,
-                  borderRadius: 50,
-                  backgroundColor: Colors.blue[600],
-                ),
-                title: "Profile",
-                subtitle: "Tap to change your profile",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
-              ),
-            ),
             SettingsGroup(
-              settingsGroupTitle: "App Settings",
+              settingsGroupTitle: "Settings",
               items: [
                 SettingsItem(
                   onTap: () {},
@@ -306,6 +282,22 @@ class _SettingPageState extends State<SettingPage> {
             SettingsGroup(
               settingsGroupTitle: "Account",
               items: [
+                SettingsItem(
+                  icons: Icons.edit,
+                  iconStyle: IconStyle(
+                    withBackground: true,
+                    borderRadius: 50,
+                    backgroundColor: Colors.blue[600],
+                  ),
+                  title: "Profile",
+                  subtitle: "Tap to change your profile",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
+                    );
+                  },
+                ),
                 SettingsItem(
                   onTap: () {},
                   icons: Icons.wallet,

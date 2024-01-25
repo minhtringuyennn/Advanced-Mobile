@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 @JsonSerializable()
 class TestPreparation {
   int? id;
@@ -15,8 +14,8 @@ class TestPreparation {
         name: json['name'] as String?,
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': id,
-    'key': key,
-    'name': name,
-  };
+        'id': id,
+        'key': key,
+        'name': name,
+      };
 }

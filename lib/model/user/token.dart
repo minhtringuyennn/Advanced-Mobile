@@ -13,11 +13,10 @@ class TokenDetail {
   }
 
   Map<String, dynamic> toJson() => {
-    'token': token,
-    'expires': expires,
-  };
+        'token': token,
+        'expires': expires,
+      };
 }
-
 
 class Token {
   TokenDetail? access;
@@ -29,7 +28,7 @@ class Token {
   }
 
   Map<String, dynamic> toJson() => {
-    'access': access?.toJson(),
-    'refresh': refresh?.toJson(),
-  };
+        'access': access?.toJson(),
+        'refresh': refresh?.toJson(),
+      };
 }

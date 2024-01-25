@@ -2,8 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../model/tutor/feedback.dart';
 
-
-
 @JsonSerializable()
 class ResponseGetListFeedback {
   String? message;
@@ -21,12 +19,11 @@ class ResponseGetListFeedback {
             ? null
             : FeedbackPagination.fromJson(json['data'] as Map<String, dynamic>),
       );
-  Map<String, dynamic> toJson() =><String, dynamic>{
-    'message': message,
-    'data': data,
-  };
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'message': message,
+        'data': data,
+      };
 }
-
 
 @JsonSerializable()
 class FeedbackPagination {
@@ -46,8 +43,7 @@ class FeedbackPagination {
             .toList(),
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'count': count,
-    'rows': rows,
-  };
+        'count': count,
+        'rows': rows,
+      };
 }
-

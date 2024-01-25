@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 @JsonSerializable()
 class CourseCategory {
   String? id;
@@ -19,8 +18,7 @@ class CourseCategory {
     this.updatedAt,
   });
 
-  factory CourseCategory.fromJson(Map<String, dynamic> json) =>
-      CourseCategory(
+  factory CourseCategory.fromJson(Map<String, dynamic> json) => CourseCategory(
         id: json['id'] as String?,
         title: json['title'] as String?,
         description: json['description'] as String?,
@@ -29,11 +27,11 @@ class CourseCategory {
         updatedAt: json['updatedAt'] as String?,
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': id,
-    'title': title,
-    'description': description,
-    'key': key,
-    'createdAt': createdAt,
-    'updatedAt': updatedAt,
-  };
+        'id': id,
+        'title': title,
+        'description': description,
+        'key': key,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
 }

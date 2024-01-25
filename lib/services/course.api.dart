@@ -1,4 +1,3 @@
-
 import '../../model/course/course_model.dart';
 import '../responses/list_course_response.dart';
 import '../services/api_service.dart';
@@ -19,13 +18,11 @@ class CourseRepository extends BaseRepository {
     required Function(List<CourseModel>, int) onSuccess,
     required Function(String) onFail,
   }) async {
-
-    String oderBy=sort.isNotEmpty? '&orderBy[]=$sort':"";
-    String dataLevel="";
-    for (String lv in level)
-      {
-        dataLevel=dataLevel+"&level[]=$lv";
-      }
+    String oderBy = sort.isNotEmpty ? '&orderBy[]=$sort' : "";
+    String dataLevel = "";
+    for (String lv in level) {
+      dataLevel = dataLevel + "&level[]=$lv";
+    }
     final response = await service.get(
         url: "course?page=$page&size=$size&q=$search$oderBy$dataLevel",
         headers: {"Authorization": "Bearer $accessToken"}) as BoundResource;
@@ -41,6 +38,4 @@ class CourseRepository extends BaseRepository {
         break;
     }
   }
-
-
 }

@@ -1,12 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BirthdayProfileSelect extends StatefulWidget {
-  const BirthdayProfileSelect({Key? key, this.dateTimeData, required this.onBirthDayChanged}) : super(key: key);
+  const BirthdayProfileSelect(
+      {Key? key, this.dateTimeData, required this.onBirthDayChanged})
+      : super(key: key);
   final DateTime? dateTimeData;
   final ValueChanged<String> onBirthDayChanged;
-
 
   @override
   State<BirthdayProfileSelect> createState() => _BirthdayProfileSelectState();
@@ -30,16 +30,15 @@ class _BirthdayProfileSelectState extends State<BirthdayProfileSelect> {
         selectedDate = picked;
         dateController.text = "${picked.toLocal()}".split(' ')[0];
         widget.onBirthDayChanged(selectedDate.toString());
-
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    if(!isInitValue){
-      dateController.text = DateFormat('yyyy-MM-dd').format(widget.dateTimeData!);
+    if (!isInitValue) {
+      dateController.text =
+          DateFormat('yyyy-MM-dd').format(widget.dateTimeData!);
     }
 
     return Column(
@@ -52,9 +51,9 @@ class _BirthdayProfileSelectState extends State<BirthdayProfileSelect> {
             decoration: InputDecoration(
               isDense: true, // Added this
               hintText: "Choose your birthday",
-              hintStyle: TextStyle(
-                  fontSize: 14, color: Colors.grey.shade400),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10), // Điều chỉnh khoảng cách nội dung
+              hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10), // Điều chỉnh khoảng cách nội dung
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),

@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 class FavouriteRepository extends ChangeNotifier {
   List<String> itemIds = [];
 
-  void setListIds(List<String> id)
-  {
-    itemIds=id;
+  void setListIds(List<String> id) {
+    itemIds = id;
   }
+
   void add(String teacherId) {
     itemIds.add(teacherId);
     notifyListeners();

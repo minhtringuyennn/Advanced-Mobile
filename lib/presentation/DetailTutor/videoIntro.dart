@@ -50,7 +50,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
       autoPlay: true,
       looping: true,
       progressIndicatorDelay:
-      bufferDelay != null ? Duration(milliseconds: bufferDelay!) : null,
+          bufferDelay != null ? Duration(milliseconds: bufferDelay!) : null,
 
       additionalOptions: (context) {
         return <OptionItem>[
@@ -87,21 +87,21 @@ class _ChewieDemoState extends State<ChewieDemo> {
   Widget build(BuildContext context) {
     return Center(
       child: _chewieController != null &&
-          _chewieController!.videoPlayerController.value.isInitialized
+              _chewieController!.videoPlayerController.value.isInitialized
           ? Container(
-        height: 280,
-        child: Chewie(
-          controller: _chewieController!,
-        ),
-      )
+              height: 280,
+              child: Chewie(
+                controller: _chewieController!,
+              ),
+            )
           : const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 20),
-          Text('Loading'),
-        ],
-      ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 20),
+                Text('Loading'),
+              ],
+            ),
     );
   }
 }
@@ -147,11 +147,11 @@ class _DelaySliderState extends State<DelaySlider> {
         onPressed: saved
             ? null
             : () {
-          widget.onSave(delay);
-          setState(() {
-            saved = true;
-          });
-        },
+                widget.onSave(delay);
+                setState(() {
+                  saved = true;
+                });
+              },
       ),
     );
   }

@@ -259,13 +259,6 @@ class _HistoryState extends State<History> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SvgPicture.asset(
-                            'images/history.svg', // Replace with the path to your SVG file
-                            // Adjust the height as needed
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
                           Text(
                             "History",
                             style: TextStyle(

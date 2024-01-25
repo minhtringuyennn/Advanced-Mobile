@@ -17,9 +17,9 @@ class ApiService {
 
   Future<dynamic> put(
       {required String url,
-        Map<String, dynamic>? headers,
-        Map<String, dynamic>? data,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      Map<String, dynamic>? data,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.put("$baseUrl$url",
           options: Options(
@@ -43,9 +43,9 @@ class ApiService {
 
   Future<dynamic> delete(
       {required String url,
-        Map<String, dynamic>? headers,
-        Map<String, dynamic>? data,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      Map<String, dynamic>? data,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.delete("$baseUrl$url",
           options: Options(
@@ -69,9 +69,9 @@ class ApiService {
 
   Future<dynamic> post(
       {required String url,
-        Map<String, dynamic>? headers,
-        Map<String, dynamic>? data,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      Map<String, dynamic>? data,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.post("$baseUrl$url",
           options: Options(
@@ -95,12 +95,12 @@ class ApiService {
 
   Future<dynamic> get(
       {required String url,
-        Map<String, dynamic>? headers,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.get("$baseUrl$url",
           options:
-          Options(headers: headers, contentType: Headers.jsonContentType),
+              Options(headers: headers, contentType: Headers.jsonContentType),
           cancelToken: cancelToken);
       switch (response.statusCode) {
         case 200:
@@ -118,9 +118,9 @@ class ApiService {
 
   Future<dynamic> postFormUrlEncoded(
       {required String url,
-        Map<String, dynamic>? headers,
-        required Map<String, dynamic>? data,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      required Map<String, dynamic>? data,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.post("$baseUrl$url",
           options: Options(
@@ -142,9 +142,9 @@ class ApiService {
 
   Future<dynamic> postFormData(
       {required String url,
-        Map<String, dynamic>? headers,
-        required FormData? data,
-        CancelToken? cancelToken}) async {
+      Map<String, dynamic>? headers,
+      required FormData? data,
+      CancelToken? cancelToken}) async {
     try {
       final response = await api.post("$baseUrl$url",
           options: Options(

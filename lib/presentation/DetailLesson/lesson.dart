@@ -24,7 +24,7 @@ class _LessonState extends State<Lesson> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
-        const Size.fromHeight(50.0), // Define the height of the AppBar
+            const Size.fromHeight(50.0), // Define the height of the AppBar
         child: Container(
           decoration: BoxDecoration(color: Colors.blueAccent, boxShadow: [
             BoxShadow(
@@ -42,7 +42,7 @@ class _LessonState extends State<Lesson> {
               statusBarColor: Colors.black,
               // Status bar brightness (optional)
               statusBarIconBrightness:
-              Brightness.light, // For Android (dark icons)
+                  Brightness.light, // For Android (dark icons)
             ),
             title: Text(widget.title,
                 style: TextStyle(
@@ -51,12 +51,10 @@ class _LessonState extends State<Lesson> {
                   fontWeight: FontWeight.w500,
                 )),
             leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-                size: 18,
-                color: Colors.blueAccent,
-                  semanticLabel: 'Back Icon'
-              ),
+              icon: Icon(Icons.arrow_back_ios,
+                  size: 18,
+                  color: Colors.blueAccent,
+                  semanticLabel: 'Back Icon'),
               onPressed: () {
                 Navigator.pop(context);
               },

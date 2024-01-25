@@ -25,7 +25,8 @@ class _CountrySelectState extends State<CountrySelect> {
       height: 42.0, // Set height to match TextInput
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0), // Match the TextInput border radius
+        borderRadius:
+            BorderRadius.circular(8.0), // Match the TextInput border radius
         border: Border.all(
           color: Colors.grey.shade400,
           width: 1.0,
@@ -47,7 +48,8 @@ class _CountrySelectState extends State<CountrySelect> {
               widget.onCountryChanged(newValue);
             }
           },
-          items: widget.countries.map<DropdownMenuItem<String>>((String country) {
+          items:
+              widget.countries.map<DropdownMenuItem<String>>((String country) {
             return DropdownMenuItem<String>(
               value: country,
               child: Text(country),

@@ -5,9 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'Courses.dart';
 
 class SearchCourse extends StatefulWidget {
-  const SearchCourse(this.filterCallback,{super.key});
+  const SearchCourse(this.filterCallback, {super.key});
   final SearchCourseCallback filterCallback;
-
 
   @override
   State<SearchCourse> createState() => _SearchCourseState();
@@ -27,15 +26,6 @@ class _SearchCourseState extends State<SearchCourse> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SvgPicture.asset(
-          'images/ScreenCourse.svg',
-          width: 100,
-          height: 100, // Replace with the path to your SVG file
-          // Adjust the height as needed
-        ),
-        SizedBox(
-          width: 20,
-        ),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,8 +95,8 @@ class _SearchCourseState extends State<SearchCourse> {
                         ),
                         child: IconButton(
                             onPressed: () {
-                              widget.filterCallback(_textEditingDate.text??"");
-
+                              widget
+                                  .filterCallback(_textEditingDate.text ?? "");
                             },
                             icon: Icon(
                               Icons.search_rounded,

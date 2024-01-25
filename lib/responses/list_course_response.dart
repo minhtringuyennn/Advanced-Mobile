@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../model/course/course_model.dart';
 
-
-
 @JsonSerializable()
 class ResponseGetListCourse {
   String? message;
@@ -20,12 +18,11 @@ class ResponseGetListCourse {
             ? null
             : CoursePagination.fromJson(json['data'] as Map<String, dynamic>),
       );
-  Map<String, dynamic> toJson() =><String, dynamic>{
-    'message': message,
-    'data': data,
-  };
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'message': message,
+        'data': data,
+      };
 }
-
 
 @JsonSerializable()
 class CoursePagination {
@@ -45,8 +42,7 @@ class CoursePagination {
             .toList(),
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'count': count,
-    'rows': rows,
-  };
+        'count': count,
+        'rows': rows,
+      };
 }
-

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class BookingConfirmDialog extends StatefulWidget {
-  const BookingConfirmDialog({Key? key, required this.start, required this.end, required this.date}) : super(key: key);
-   final String start;
-   final String end;
-   final String date;
+  const BookingConfirmDialog(
+      {Key? key, required this.start, required this.end, required this.date})
+      : super(key: key);
+  final String start;
+  final String end;
+  final String date;
 
   @override
   State<BookingConfirmDialog> createState() => _BookingConfirmDialogState();
@@ -13,8 +15,6 @@ class BookingConfirmDialog extends StatefulWidget {
 class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
   final _controller = TextEditingController();
 
-
-
   @override
   void initState() {
     super.initState();
@@ -22,21 +22,18 @@ class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
 
   @override
   Widget build(BuildContext context) {
-
     return AlertDialog(
-      title: const Text('Booking details',style: TextStyle(
-        fontWeight: FontWeight.w500
-      ),),
+      title: const Text(
+        'Booking details',
+        style: TextStyle(fontWeight: FontWeight.w500),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Booking time',style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500
-
-          ),
+            'Booking time',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 4),
           Text(
@@ -50,10 +47,7 @@ class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
           const SizedBox(height: 8),
           Text(
             'Note',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20
-            ),
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
           ),
           const SizedBox(height: 4),
           SizedBox(
@@ -64,7 +58,8 @@ class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
               maxLines: 4,
               decoration: const InputDecoration(
                 hintText: 'Your requests for the tutor',
-                hintStyle: TextStyle(fontWeight: FontWeight.w300, color: Colors.grey),
+                hintStyle:
+                    TextStyle(fontWeight: FontWeight.w300, color: Colors.grey),
                 contentPadding: EdgeInsets.all(8),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -77,7 +72,7 @@ class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
       actions: [
         TextButton(
             onPressed: () {
-              Navigator.pop(context,false);
+              Navigator.pop(context, false);
             },
             child: const Text(
               'CANCEL',
@@ -86,7 +81,7 @@ class _BookingConfirmDialogState extends State<BookingConfirmDialog> {
         TextButton(
             onPressed: () async {
               if (mounted) {
-                Navigator.pop(context,[true,_controller.text]);
+                Navigator.pop(context, [true, _controller.text]);
               }
             },
             child: const Text('BOOK')),

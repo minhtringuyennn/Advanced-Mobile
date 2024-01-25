@@ -310,11 +310,6 @@ class _CoursesState extends State<Courses> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SearchCourse(searchCourseCallback),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                          "LiveTutor has built the most quality, methodical and scientific courses in the fields of life for those who are in need of improving their knowledge of the fields."),
                       Filter(filterCallback),
                       SizedBox(height: 20),
                       Content(courses, groupedCourses),

@@ -595,7 +595,7 @@ class _SessionState extends State<Session> {
           ),
           child: ClipOval(
             child: Image.asset(
-                'images/welcome_login.png'), // Thay thế bằng hình ảnh của bạn
+                'assets/images/welcome_login.png'), // Thay thế bằng hình ảnh của bạn
           ),
         ),
         Text(

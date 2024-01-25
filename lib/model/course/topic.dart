@@ -24,8 +24,7 @@ class CourseTopic {
     this.updatedAt,
   });
 
-  factory CourseTopic.fromJson(Map<String, dynamic> json) =>
-      CourseTopic(
+  factory CourseTopic.fromJson(Map<String, dynamic> json) => CourseTopic(
         id: json['id'] as String?,
         courseId: json['courseId'] as String?,
         orderCourse: json['orderCourse'] as int?,
@@ -37,14 +36,14 @@ class CourseTopic {
         updatedAt: json['updatedAt'] as String?,
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id':id,
-    'courseId': courseId,
-    'orderCourse': orderCourse,
-    'name': name,
-    'nameFile': nameFile,
-    'description': description,
-    'videoUrl': videoUrl,
-    'createdAt': createdAt,
-    'updatedAt': updatedAt,
-  };
+        'id': id,
+        'courseId': courseId,
+        'orderCourse': orderCourse,
+        'name': name,
+        'nameFile': nameFile,
+        'description': description,
+        'videoUrl': videoUrl,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
 }

@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'lesson_status.dart';
 
-
 @JsonSerializable()
 class ClassReview {
   final String? bookingId;
@@ -45,8 +44,7 @@ class ClassReview {
     this.lessonStatus,
   });
 
-  factory ClassReview.fromJson(Map<String, dynamic> json) =>
-      ClassReview(
+  factory ClassReview.fromJson(Map<String, dynamic> json) => ClassReview(
         bookingId: json['bookingId'] as String?,
         lessonStatusId: json['lessonStatusId'] as int?,
         book: json['book'] as String?,
@@ -66,26 +64,27 @@ class ClassReview {
         overallComment: json['overallComment'] as String?,
         lessonStatus: json['lessonStatus'] == null
             ? null
-            : LessonStatus.fromJson(json['lessonStatus'] as Map<String, dynamic>),
+            : LessonStatus.fromJson(
+                json['lessonStatus'] as Map<String, dynamic>),
       );
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'bookingId': bookingId,
-    'lessonStatusId': lessonStatusId,
-    'book': book,
-    'unit': unit,
-    'lesson': lesson,
-    'page': page,
-    'lessonProgress': lessonProgress,
-    'behaviorRating': behaviorRating,
-    'behaviorComment': behaviorComment,
-    'listeningRating': listeningRating,
-    'listeningComment': listeningComment,
-    'speakingRating': speakingRating,
-    'speakingComment': speakingComment,
-    'vocabularyRating': vocabularyRating,
-    'vocabularyComment': vocabularyComment,
-    'homeworkComment': homeworkComment,
-    'overallComment': overallComment,
-    'lessonStatus': lessonStatus,
-  };
+        'bookingId': bookingId,
+        'lessonStatusId': lessonStatusId,
+        'book': book,
+        'unit': unit,
+        'lesson': lesson,
+        'page': page,
+        'lessonProgress': lessonProgress,
+        'behaviorRating': behaviorRating,
+        'behaviorComment': behaviorComment,
+        'listeningRating': listeningRating,
+        'listeningComment': listeningComment,
+        'speakingRating': speakingRating,
+        'speakingComment': speakingComment,
+        'vocabularyRating': vocabularyRating,
+        'vocabularyComment': vocabularyComment,
+        'homeworkComment': homeworkComment,
+        'overallComment': overallComment,
+        'lessonStatus': lessonStatus,
+      };
 }

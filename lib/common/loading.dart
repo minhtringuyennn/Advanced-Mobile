@@ -8,7 +8,6 @@ class Loading extends StatelessWidget {
     return Container(
         color: Colors.white,
         constraints: const BoxConstraints.expand(),
-        child: const Center(child: CircularProgressIndicator())
-    );
+        child: const Center(child: CircularProgressIndicator()));
   }
 }
