@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../Provider/auth_provider.dart';
 import '../../main.dart';
@@ -22,6 +23,11 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   String selectedLanguage = 'Automatic';
   bool isDarkMode = false;
+
+  // load env file
+  Future<void> loadEnv() async {
+    await dotenv.load(fileName: ".env");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +324,32 @@ class _SettingPageState extends State<SettingPage> {
               settingsGroupTitle: "Overview",
               items: [
                 SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    // load env
+                    loadEnv();
+
+                    // show a dialog
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('About'),
+                          content: Text(
+                            'App currently running on ${dotenv.env['APP_MODE']} environment.',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   icons: Icons.info_rounded,
                   iconStyle: IconStyle(
                     backgroundColor: Colors.purple,

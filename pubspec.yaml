@@ -54,6 +54,7 @@ dependencies:
   dio: ^5.4.0
   json_annotation: ^4.8.1
   cached_network_image: ^3.3.0
+  flutter_dotenv: ^5.1.0
   # jitsi_meet_wrapper: ^0.2.0+1
 
 dev_dependencies:
@@ -81,6 +82,7 @@ flutter:
     - assets/images/
     - assets/data/
     - assets/Lessons/
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
