@@ -1,69 +1,31 @@
-name: react-native-android-build-apk-aab
+name: Android Release
+
 on:
   push:
     branches:
       - feat
 
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: CICD
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: PrepareReg Names
-        run: |
-          echo "IMAGE_REPOSITORY=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-
-      # - name: Create .env file
-      #   run: |
-      #     echo "APP_MODE=${{ secrets.APP_MODE }}" >> .env
-
-      - name: Build Android APK
-        run: |
-          cd android
-          ./gradlew assembleRelease
-
-      - name: Build Android AAB
-        run: |
-          cd android
-          ./gradlew bundleRelease
-
-      - name: Upload APK Release - ${{ env.IMAGE_REPOSITORY }}
-        uses: actions/upload-artifact@v3
+      - uses: subosito/flutter-action@v2
         with:
-          name: ${{ github.run_number }} - ${{ env.IMAGE_REPOSITORY }} - APK(s) release generated
-          path: android/app/build/outputs/apk/release/
+          flutter-version: "3.16.5"
+          channel: "stable"
 
-      - name: Upload AAB (App Bundle) Release - ${{ env.IMAGE_REPOSITORY }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.run_number }} - ${{ env.IMAGE_REPOSITORY }} - App bundle(s) AAB release generated
-          path: android/app/build/outputs/bundle/release/
+      - name: Get dependencies
+        run: flutter pub get
 
-      # - name: Build OTA update
-      #   uses: mrikirill/RN-AppCenter-CodePush@v1.0.0
-      #   if: github.ref == 'refs/heads/hotfix'
-      #   env:
-      #     APPCENTER_TOKEN: ${{ secrets.APPCENTER_TOKEN }}
-      #     APP_IOS: ${{ secrets.APP_IOS }}
-      #     OTA_CHANNEL_IOS: ${{ secrets.OTA_CHANNEL_IOS }}
-      #     APP_ANDROID: ${{ secrets.APP_ANDROID }}
-      #     OTA_CHANNEL_ANDROID: ${{ secrets.OTA_CHANNEL_ANDROID }}
-
-      # - name: Upload to App Center
-      #   run: |
-      #     npm install -g appcenter-cli
-      #     appcenter login --token ${{ secrets.APPCENTER_TOKEN }}
-      #     appcenter distribute release --app ${{ secrets.APP_ANDROID }} --file android/app/build/outputs/apk/release/app-release.apk --group ${{ secrets.OTA_CHANNEL_ANDROID }} --release-notes "Release ${{ github.run_number }} - ${{ env.IMAGE_REPOSITORY }} - APK(s) release generated"
+      - name: Start release build
+        run: flutter build appbundle
